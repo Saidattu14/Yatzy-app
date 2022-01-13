@@ -1,6 +1,7 @@
- import React ,{useState}from 'react';
+ import React ,{useState,useEffect}from 'react';
  import LottieView from 'lottie-react-native';
  import {DataContext} from '../reducers/datalayer'
+ import AsyncStorage from '@react-native-async-storage/async-storage';
  import {
    SafeAreaView,
    ScrollView,
@@ -23,16 +24,38 @@
 
 const StartingPage = ({navigation}) => {
   const { state, dispatch } = React.useContext(DataContext)
-   const a = [state.MyName]
+  const [loading,SetLoading] = useState(true);
+  const [a,setA] = useState([""]);
+  
+   
+   
    const startGame = () => {
-    navigation.navigate("Home", {
-      MyName : text,
-      OppName : number
-  });
+    navigation.navigate("Name", {});}
   const createAcc = () => {
-    
+    navigation.navigate("Home", {});
   }
-   }
+  useEffect(() => {
+    if(loading == true)
+    {
+      const a1 = async() => {
+        let a2 = await AsyncStorage.getItem("MyName")
+        if(a2 == null)
+        {
+
+          SetLoading(false);
+        }
+        else
+        {
+          const a = []
+          a.push(a2);
+          setA(a)
+          SetLoading(false);
+        }
+        return a2;
+      };
+      a1();
+    }
+  }, []);
    return (
          <View style = {styles.main}>
               <SafeAreaView style = {styles.sectionContainer}>
@@ -43,21 +66,21 @@ const StartingPage = ({navigation}) => {
               </SafeAreaView>
                 {
                   a.map((rowData, index) => {
-                    if(rowData == "String")
+                    if(rowData == "")
                     {
                     return(
-                        <TouchableOpacity key = {index} style = {styles.sectionDescription} onPress={()=>console.log("ok")}>
+                        <TouchableOpacity key = {index} style = {styles.sectionDescription} onPress={()=>startGame()}>
                           <Text  style = {styles.sectionTitle}>
-                              Create Account
+                            Create Account
                           </Text>
                         </TouchableOpacity>
                     )}
                     else
                     {
                       return(
-                            <TouchableOpacity style = {styles.sectionDescription} onPress={()=>console.log("ok")}>
+                            <TouchableOpacity key = {index}  style = {styles.sectionDescription} onPress={()=>console.log("ok")}>
                               <Text  style = {styles.sectionTitle}>
-                                  Start Yahtzee
+                                Start Yahtzee
                               </Text>
                             </TouchableOpacity>
                       )
@@ -65,7 +88,6 @@ const StartingPage = ({navigation}) => {
                   })
                   
                 }
-                
       </View>
    );
  };

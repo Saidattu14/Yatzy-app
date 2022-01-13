@@ -23,6 +23,7 @@ import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Names from './Components/Names';
 import StartingPage from './Components/Home1';
+import HomeSearch from './Components/Home2';
 export interface State {
   Navigation : any,
 }
@@ -120,6 +121,12 @@ function App() {
         <Stack.Screen
           name="Game_page"
           component={Main}
+          options={{
+            headerShown: false,
+        }}/>
+         <Stack.Screen
+          name="Search_page"
+          component={HomeSearch}
           options={{
             headerShown: false,
         }}/>

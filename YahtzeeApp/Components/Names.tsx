@@ -1,66 +1,81 @@
 import React from "react";
-import { SafeAreaView, StyleSheet, TextInput,Text } from "react-native";
-
-
+import { SafeAreaView, StyleSheet, TextInput,Text,TouchableOpacity } from "react-native";
+import styled from 'styled-components/native';
+import LottieView from 'lottie-react-native';
+import {DataContext} from '../reducers/datalayer'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Names = ({navigation}) => {
+  const { state, dispatch } = React.useContext(DataContext)
+   const [text, onChangeText] = React.useState("");
+   const submit = async() => {
   
-
-   const a1 = () => {
-    navigation.navigate("Home", {
-        MyName : text,
-        OppName : number
-      });
-   }
-   const [text, onChangeText] = React.useState(null);
-   const [number, onChangeNumber] = React.useState(null);
-   
- 
-    return (
-    <SafeAreaView >
+    await AsyncStorage.setItem("MyName", text);
     
-      <TextInput
+   }
+    return (
+    <SafeAreaView style = {styles.main}>
+       <SafeAreaView style = {styles.sectionContainer}>
+       <LottieView
+                  source={require('../Assets/login.json')}
+                  style = {styles.highlight} autoPlay = {true} loop = {true}>
+                  </LottieView>
+        </SafeAreaView>
+        <TextInput
         style={styles.input}
         onChangeText={onChangeText}
         value={text}
+        placeholderTextColor = {'black'}
+        placeholder="Choose a unique username"
       />
-      <TextInput
-        style={styles.input}
-        onChangeText={onChangeNumber}
-        value={number}
-      />
-    
-       
-       <Text onPress={() => a1()}>
-           Submit
-       </Text>
+        <TouchableOpacity onPress={()=> submit()} style = {{
+          height: 40,
+          margin: 15,
+          borderWidth: 1,
+          padding: 10,
+          width : 100,
+          borderRadius : 7,
+          backgroundColor : 'green',
+          borderColor : 'white'
+
+        }} >
+          <Text   style = {{
+            color : 'white',
+            textAlign : 'center'
+          }}>
+          Submit
+          </Text>
+          
+          </TouchableOpacity>
+        
     </SafeAreaView>
     )
 };
 
 const styles = StyleSheet.create({
-    input: {
-        height: 40,
-        margin: 12,
-        borderWidth: 1,
-        padding: 10,
-      },
-   main : {
-   height : '100%',
-   width : '100%',
-  },
-  ConnData: {
-    alignItems : 'center',
+  sectionContainer: {
     height : '50%',
     width : '50%',
-  },
-  ConnBck : {
-    backgroundColor : 'white',
     alignItems : 'center',
   },
-  IconData: {
-    
+  highlight: {
     height : '100%',
-    width : '40%',
+    width : '100%',
+   
+  },
+  input: {
+    height: 50,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    width : 300,
+    borderColor : 'green',
+    fontSize : 18,
+  },
+   main : {
+   
+   height : '100%',
+   width : '100%',
+   alignItems : 'center'
   },
 });
 export default Names;

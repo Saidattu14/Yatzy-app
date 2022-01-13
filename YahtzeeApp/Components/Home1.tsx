@@ -1,5 +1,6 @@
- import React from 'react';
+ import React ,{useState}from 'react';
  import LottieView from 'lottie-react-native';
+ import {DataContext} from '../reducers/datalayer'
  import {
    SafeAreaView,
    ScrollView,
@@ -19,41 +20,19 @@
    ReloadInstructions,
  } from 'react-native/Libraries/NewAppScreen';
  
- const Section: React.FC<{
-   title: string;
- }> = ({children, title}) => {
-   const isDarkMode = useColorScheme() === 'dark';
-   return (
-     <View style={styles.sectionContainer}>
-       <Text
-         style={[
-           styles.sectionTitle,
-           {
-             color: isDarkMode ? Colors.white : Colors.black,
-           },
-         ]}>
-         {title}
-       </Text>
-       <Text
-         style={[
-           styles.sectionDescription,
-           {
-             color: isDarkMode ? Colors.light : Colors.dark,
-           },
-         ]}>
-         {children}
-       </Text>
-     </View>
-   );
- };
- 
- const Home = () => {
-   const isDarkMode = useColorScheme() === 'dark';
- 
-   const backgroundStyle = {
-     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-   };
- 
+
+const StartingPage = ({navigation}) => {
+  const { state, dispatch } = React.useContext(DataContext)
+   const a = [state.MyName]
+   const startGame = () => {
+    navigation.navigate("Home", {
+      MyName : text,
+      OppName : number
+  });
+  const createAcc = () => {
+    
+  }
+   }
    return (
          <View style = {styles.main}>
               <SafeAreaView style = {styles.sectionContainer}>
@@ -62,19 +41,32 @@
                   style = {styles.highlight} autoPlay = {true} loop = {true}>
                   </LottieView>
               </SafeAreaView>
-              <TouchableOpacity style = {styles.sectionDescription} onPress={()=>console.log("ok")}>
-                  <Text  style = {styles.sectionTitle}>
-                   Start Yahtzee
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style = {styles.sectionDescription} onPress={()=>console.log("ok")}>
-                  <Text  style = {styles.sectionTitle}>
-                    Create Account
-                  </Text>
-                </TouchableOpacity>
-         </View>
-        
-     
+                {
+                  a.map((rowData, index) => {
+                    if(rowData == "String")
+                    {
+                    return(
+                        <TouchableOpacity key = {index} style = {styles.sectionDescription} onPress={()=>console.log("ok")}>
+                          <Text  style = {styles.sectionTitle}>
+                              Create Account
+                          </Text>
+                        </TouchableOpacity>
+                    )}
+                    else
+                    {
+                      return(
+                            <TouchableOpacity style = {styles.sectionDescription} onPress={()=>console.log("ok")}>
+                              <Text  style = {styles.sectionTitle}>
+                                  Start Yahtzee
+                              </Text>
+                            </TouchableOpacity>
+                      )
+                    }
+                  })
+                  
+                }
+                
+      </View>
    );
  };
  
@@ -83,16 +75,12 @@
      alignContent : 'center', 
      height : '70%',
      width : '100%',
-    
-    
    },
    main : {
     height : '100%',
     width : '100%',
     backgroundColor : '#1c1c1c'
    },
-
-   
    sectionTitle: {
     fontSize: 20, 
     fontFamily: 'Times New Roman',
@@ -118,5 +106,5 @@
    },
  });
  
- export default Home;
+ export default StartingPage;
  

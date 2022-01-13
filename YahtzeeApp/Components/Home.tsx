@@ -11,10 +11,11 @@ import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {DataContext} from '../reducers/datalayer'
 async function onAppBootstrap() {
-  // Register the device with FCM
+  
   // await messaging().registerDeviceForRemoteMessages();
   // const token = await messaging().getToken();
   // console.log(token)
+  // console.log("Helllo")
 }
 onAppBootstrap()
 
@@ -31,8 +32,43 @@ const sendmsg = () => {
     "Method" : "Connect",
     "MyName" : MyName,
     "OpponentName" : OppName,
+    "MyScore":
+          {
+              "Chance": 0,
+              "Fives": 0,
+              "FourofKind": 0,
+              "Fours": 0, 
+              "FullHouse": 0, 
+              "LargeStraight": 0,
+              "Ones": 0, 
+              "Pair": 0, 
+              "Sixs": 0, 
+              "SmallStraight": 0, 
+              "ThreeofKind": 0, 
+              "Threes": 0, 
+              "TwoPair": 0,
+              "Twos": 0,
+              "Yatzy": 0
+          },
+    "Colors" : {
+          "Chance": 'yellow',
+          "Fives":  "yellow",
+          "FourofKind":  "yellow",
+          "Fours":  "yellow", 
+          "FullHouse":  "yellow", 
+          "LargeStraight":  "yellow",
+          "Ones":  "yellow", 
+          "Pair":  "yellow", 
+          "Sixs":  "yellow", 
+          "SmallStraight":  "yellow", 
+          "ThreeofKind":  "yellow", 
+          "Threes":  "yellow", 
+          "TwoPair":  "yellow",
+          "Twos":  "yellow",
+          "Yatzy":  "yellow"
+      },
   }
-  console.log(obj)
+  
   ws.send(JSON.stringify(obj));
 }
 ws.onopen = () => {
@@ -91,8 +127,6 @@ ws.onclose = (e) => {
         
       //   setLoading(false);
       // });
-
-
   }, []);
 
   return (

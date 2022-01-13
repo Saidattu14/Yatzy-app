@@ -14,9 +14,6 @@ const random = (min = 1, max = 6) => {
   let num = Math.random() * (max - min) + min;
   return Math.round(num);
 }
-
-
-
 const Search : React.FC<{websocket: WebSocket;vl: String,v2:String}> = ({websocket,vl,v2}) => {
     const [yes,setYes] = useState([0,0,0,0,0])
     const [yes1,setYes1] = useState([0,0,0,0,0])
@@ -119,8 +116,7 @@ const Search : React.FC<{websocket: WebSocket;vl: String,v2:String}> = ({websock
       setYes(arr)
     }
     function DiceRoll (): void {
-       var list = []
-      
+      var list = []
       if(chances != 'Opponent Turn' && chances != "Over")
       {
       
@@ -158,7 +154,30 @@ const Search : React.FC<{websocket: WebSocket;vl: String,v2:String}> = ({websock
         }
         else
         {
-          list.push(0);
+          if(dices[i] == 5)
+          {
+            list.push(1);
+          }
+          else if(dices[i] == 10)
+          {
+            list.push(2);
+          }
+          else if(dices[i] == 15)
+          {
+            list.push(3);
+          }
+          else if(dices[i] == 20)
+          {
+            list.push(4);
+          }
+          else if(dices[i] == 25)
+          {
+            list.push(5);
+          }
+          else if(dices[i] == 30)
+          {
+            list.push(6);
+          }
         }
       }
       let arr: React.SetStateAction<number[]> = [...dices]
@@ -235,6 +254,7 @@ const Search : React.FC<{websocket: WebSocket;vl: String,v2:String}> = ({websock
       const a = JSON.parse(e.data);
       if(a.Method == "Estimated_MyScore")
       {
+      
        setScore(a);
       }
       else if (a.Method == "Update_MyScore")

@@ -22,6 +22,7 @@ import Main from './Components/Main';
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Names from './Components/Names';
+import StartingPage from './Components/Home1';
 export interface State {
   Navigation : any,
 }
@@ -91,10 +92,16 @@ function App() {
     //   </ScrollView> 
     //  </SafeAreaView> 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Name">
+      <Stack.Navigator initialRouteName="Start">
         <Stack.Screen
           name="Home"
           component={Home}
+          options={{
+            headerShown: false,
+          }} />
+          <Stack.Screen
+          name="Start"
+          component={StartingPage}
           options={{
             headerShown: false,
           }} />

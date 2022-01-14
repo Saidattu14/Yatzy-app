@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, TextInput,Text,TouchableOpacity } from "react-native";
 import styled from 'styled-components/native';
 import LottieView from 'lottie-react-native';
@@ -6,7 +6,8 @@ import {DataContext} from '../reducers/datalayer'
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const Names = ({navigation}) => {
-  const { state, dispatch } = React.useContext(DataContext)
+  
+   const { state, dispatch } = React.useContext(DataContext)
    const [text, onChangeText] = React.useState("");
    const [loading,setLoading] = useState(true);
    const [result, setResult] = useState('');
@@ -46,6 +47,8 @@ const Names = ({navigation}) => {
           }
           stg();
           setResult("UserName Added Sucesssfully")
+          navigation.navigate("Search_page", {})
+          
         }
         else
         {
@@ -96,8 +99,9 @@ const Names = ({navigation}) => {
      } catch (error) {
        console.log("Error")
      }
-    
    }
+   useEffect(() => {
+   },[])
     return (
     <SafeAreaView style = {styles.main}>
        <SafeAreaView style = {styles.sectionContainer}>
@@ -139,9 +143,7 @@ const Names = ({navigation}) => {
           }}>
           Submit
           </Text>
-          
           </TouchableOpacity>
-        
     </SafeAreaView>
     )
 };

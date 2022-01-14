@@ -25,6 +25,7 @@ const StartingPage = ({navigation}) => {
    
 const startGame = () => {
     navigation.navigate("Search_page", {});}
+  
   const createAcc = () => {
     navigation.navigate("Name", {});
   }
@@ -32,7 +33,7 @@ const startGame = () => {
     if(loading == true)
     {
       const a1 = async() => {
-        await AsyncStorage.removeItem("MyName");
+        
         let a2 = await AsyncStorage.getItem("MyName")
         if(a2 == null)
         {

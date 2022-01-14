@@ -1,7 +1,7 @@
-import React,{useState} from 'react';
+import React,{useEffect, useState} from 'react';
 import LottieView from 'lottie-react-native';
 import {Image,SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,View,TouchableOpacity,
-  TextInput,FlatList} from 'react-native';
+  TextInput,FlatList,BackHandler} from 'react-native';
   import {DataContext} from '../reducers/datalayer'
 import StartingPage from './Home1';
 const Search = () => {
@@ -37,7 +37,7 @@ const UserList : React.FC<{Name : String}> = ({Name}) => {
 );
 }
 
-const HomeSearch = () => {
+const HomeSearch = ({navigation}) => {
   const { state, dispatch } = React.useContext(DataContext)
   const [msg,SetMsg] = useState(true);
   const [name,setName] = useState('');
@@ -99,6 +99,15 @@ const HomeSearch = () => {
     });
     setList(newData);
   }
+  const backAction = () => {
+    navigation.popToTop()
+    return true;
+  };
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+  },[])
   return (
         <View style = {styles.main}>
           <SafeAreaView style = {styles.sectionDescription}>

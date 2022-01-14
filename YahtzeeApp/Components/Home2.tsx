@@ -4,6 +4,7 @@ import {Image,SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,V
   TextInput,FlatList,BackHandler} from 'react-native';
   import {DataContext} from '../reducers/datalayer'
 import StartingPage from './Home1';
+import { CommonActions } from '@react-navigation/native';
 const Search = () => {
     return (
         <TouchableOpacity style = {styles.sectionDescription} onPress={()=>console.log("ok")}>
@@ -100,7 +101,16 @@ const HomeSearch = ({navigation}) => {
     setList(newData);
   }
   const backAction = () => {
-    navigation.popToTop()
+    
+    
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 1,
+        routes: [
+          { name: "Name" },
+        ],
+      })
+    );
     return true;
   };
   useEffect(() => {

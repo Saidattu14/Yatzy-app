@@ -21,10 +21,7 @@ const StartingPage = ({navigation}) => {
   const { state, dispatch } = React.useContext(DataContext)
   const [loading,SetLoading] = useState(true);
   const [a,setA] = useState([""]);
-  console.log(a)
   
-   
-   
 const startGame = () => {
     navigation.navigate("Search_page", {});}
   
@@ -36,7 +33,7 @@ const startGame = () => {
     if(loading == true)
     {
       const a1 = async() => {
-        
+      
         let a2 = await AsyncStorage.getItem("MyName")
         if(a2 == null)
         {

@@ -57,6 +57,7 @@ const Names = ({navigation}) => {
       }
       else if(a.Method == "UserList")
       {
+        console.log(a.Data)
         setData(a.Data)
       }
     };

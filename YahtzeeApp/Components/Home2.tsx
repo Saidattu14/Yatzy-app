@@ -5,14 +5,13 @@ import {Image,SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,V
   import {DataContext} from '../reducers/datalayer'
 import StartingPage from './Home1';
 import { CommonActions } from '@react-navigation/native';
-const Search = () => {
-    return (
-        <TouchableOpacity style = {styles.sectionDescription} onPress={()=>console.log("ok")}>
-          <TextInput onSubmitEditing={()=> console.log("ok")} style = {styles.sectionTitle} placeholder="Search for Username" placeholderTextColor = 'green'/>
-        </TouchableOpacity>
-    );
-};
-const UserList : React.FC<{Name : String}> = ({Name}) => {
+import AsyncStorage from '@react-native-async-storage/async-storage';
+export interface State {
+  name: String;
+  status: String;
+}
+
+const UserList : React.FC<{Value : State}> = ({Value}) => {
   return (
    <SafeAreaView  style = {styles.sectionDescription}>
     <View style = {styles.sectionList}>
@@ -25,32 +24,29 @@ const UserList : React.FC<{Name : String}> = ({Name}) => {
                 </Image>
               </SafeAreaView>
               <SafeAreaView style = {styles.sectionProfileData}>
-                <Text style = {styles.sectionName}>Naga Sai Dattu</Text>
-                <Text style = {styles.sectionStatus}>Online</Text>
+                <Text style = {styles.sectionName}>{Value.name}</Text>
+                <Text style = {styles.sectionStatus}>{Value.status}</Text>
               </SafeAreaView>
               <SafeAreaView style = {styles.sectionRequest}>
                 <Text style = {styles.sectionRequestText}>
-                  Send Request
+                Send Request
                 </Text>
               </SafeAreaView>
             </View>
    </SafeAreaView>
 );
 }
-
 const HomeSearch = ({navigation}) => {
   const { state, dispatch } = React.useContext(DataContext)
   const [msg,SetMsg] = useState(true);
   const [name,setName] = useState('');
   const [text, setText] = useState('');
-  const DATA = require('../name.json').List;
-  const [list, setList] = useState(DATA);
-
-  
+  const [Data,setData] = useState(null);
+  const [list, setList] = useState(null);
+  var ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
   if(state.ws == null)
   {
-    var ws = new WebSocket('ws://192.168.43.99:8080/', 'echo-protocol');
-    ws.onopen = () => {
+    ws.onopen = async() => {
         console.log('connected')
         dispatch({
           type: 'SetSocket',
@@ -58,56 +54,53 @@ const HomeSearch = ({navigation}) => {
         });
         if(msg == true)
         {
+          let a2 = await AsyncStorage.getItem("MyName")
           let obj = {
             "Method" : "UserList",
+            "MyName" : a2
           }
+          console.log(obj)
           ws.send(JSON.stringify(obj));
-          
           SetMsg(false);
         }
-      };
+    };
+     
   }
-  else
-  {
+  try {
     state.ws.onmessage = (e) => {
       // a message was received
-      console.log(e.data);
-    };
-    
-    state.ws.onerror = (e) => {
-      // an error occurred
-      console.log(e.message);
-    };
-    
-    state.ws.onclose = (e) => {
-      // connection closed
-      console.log(e.code, e.reason);
-    };
+      const a = JSON.parse(e.data);
+      setList(a.Data)
+      setData(a.Data)
+    }
+  } catch (error) {
+    console.log("NotConnected")
   }
   const renderItem = ({ item }) => (
-    <UserList Name = {item} />
+    
+    <UserList Value = {item} />
   );
   const TC = (text : String) => {
     
     setText(text);
-    const newData = DATA.filter(function (item) {
-      
-      const itemData = item.Name
-        ? item.Name.toUpperCase()
+    if(list != null)
+    {
+    const newData = Data.filter(function (item) {
+      const itemData = item.name
+        ? item.name.toUpperCase()
         : ''.toUpperCase();
       const textData = text.toUpperCase();
       return itemData.indexOf(textData) > -1;
     });
-    setList(newData);
+    setList(newData)
+    }
   }
   const backAction = () => {
-    
-    
     navigation.dispatch(
       CommonActions.reset({
-        index: 1,
+        index: 0,
         routes: [
-          { name: "Name" },
+          { name: "Start" },
         ],
       })
     );
@@ -126,11 +119,9 @@ const HomeSearch = ({navigation}) => {
           <FlatList
             data={list}
             renderItem={renderItem}
-            keyExtractor={item => item.Name}
+            keyExtractor={item => item.index}
           />
         </View>
-       
-    
   );
 };
 

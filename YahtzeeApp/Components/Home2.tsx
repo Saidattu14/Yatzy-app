@@ -87,6 +87,7 @@ const HomeSearch = () => {
     <UserList Name = {item} />
   );
   const TC = (text : String) => {
+    
     setText(text);
     const newData = DATA.filter(function (item) {
       

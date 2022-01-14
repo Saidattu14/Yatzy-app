@@ -2,8 +2,8 @@
  import LottieView from 'lottie-react-native';
  import {DataContext} from '../reducers/datalayer'
  import AsyncStorage from '@react-native-async-storage/async-storage';
- import {
-   SafeAreaView,
+ import messaging from '@react-native-firebase/messaging';
+ import {SafeAreaView,
    ScrollView,
    StatusBar,
    StyleSheet,
@@ -13,14 +13,8 @@
    TouchableOpacity
  } from 'react-native';
  
- import {
-   Colors,
-   DebugInstructions,
-   Header,
-   LearnMoreLinks,
-   ReloadInstructions,
- } from 'react-native/Libraries/NewAppScreen';
- 
+
+
 
 const StartingPage = ({navigation}) => {
   const { state, dispatch } = React.useContext(DataContext)
@@ -38,6 +32,7 @@ const startGame = () => {
     if(loading == true)
     {
       const a1 = async() => {
+        await AsyncStorage.removeItem("MyName");
         let a2 = await AsyncStorage.getItem("MyName")
         if(a2 == null)
         {
@@ -51,6 +46,7 @@ const startGame = () => {
           setA(a)
           SetLoading(false);
         }
+
         return a2;
       };
       a1();

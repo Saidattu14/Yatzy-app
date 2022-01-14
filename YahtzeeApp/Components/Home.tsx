@@ -10,14 +10,7 @@ import RequestPage from './Request';
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {DataContext} from '../reducers/datalayer'
-async function onAppBootstrap() {
-  
-  // await messaging().registerDeviceForRemoteMessages();
-  // const token = await messaging().getToken();
-  // console.log(token)
-  // console.log("Helllo")
-}
-onAppBootstrap()
+
 
 const Home = ({navigation,route}) => {
   const {MyName,OppName} = route.params;

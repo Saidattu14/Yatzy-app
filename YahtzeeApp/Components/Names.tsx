@@ -1,15 +1,101 @@
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView, StyleSheet, TextInput,Text,TouchableOpacity } from "react-native";
 import styled from 'styled-components/native';
 import LottieView from 'lottie-react-native';
 import {DataContext} from '../reducers/datalayer'
+import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const Names = ({navigation}) => {
   const { state, dispatch } = React.useContext(DataContext)
    const [text, onChangeText] = React.useState("");
+   const [loading,setLoading] = useState(true);
+   const [result, setResult] = useState('');
+   const [Data, setData] = useState();
+   const [colors, setColor] = useState('red');
+   var ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
+   if(state.ws == null)
+   {
+   ws.onopen = () => {
+    console.log('connected')
+    if(loading == true)
+    {
+      dispatch({
+        type: 'SetSocket',
+        ws: ws,
+      });
+      let obj = {
+        "Method" : "Validation",
+      }
+      ws.send(JSON.stringify(obj));
+      setLoading(false);
+    }
+    };
+   }
+    ws.onmessage = (e) => {
+      // a message was received
+      const a = JSON.parse(e.data);
+      if(a.Method == "UserValid")
+      {
+        if(a.Result == "true")
+        {
+          const  stg = async() => 
+          {
+            let token = await messaging().getToken();
+            await AsyncStorage.setItem("MyName", text);
+            await AsyncStorage.setItem("FCMtoken",token);
+          }
+          stg();
+          setResult("UserName Added Sucesssfully")
+        }
+        else
+        {
+          setResult("Failure")
+        }
+      }
+      else if(a.Method == "UserList")
+      {
+        setData(a.Data)
+      }
+    };
+    const TC = (text : String) => {
+      onChangeText(text);
+      if(text != "")
+      {
+        const newData = Data.filter(function (item) {
+          const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
+          const textData = text.toUpperCase();
+          return itemData.indexOf(textData) > -1;
+        });
+        if(newData.length == 0)
+        {
+          setColor('black')
+        }
+        else
+        {
+          setColor('red');
+        }
+      }
+    }
    const submit = async() => {
-  
-    await AsyncStorage.setItem("MyName", text);
+     try {
+       
+       if(text != '' && colors != 'red')
+       {
+
+       await messaging().registerDeviceForRemoteMessages();
+       let token = await messaging().getToken();
+       if(state.ws != null)
+       {
+        let obj = {
+          "Method" : "AddUser",
+          "MyName" : text,
+          "FCMToken" : token,
+        }
+        ws.send(JSON.stringify(obj));}
+       }
+     } catch (error) {
+       console.log("Error")
+     }
     
    }
     return (
@@ -20,12 +106,21 @@ const Names = ({navigation}) => {
                   style = {styles.highlight} autoPlay = {true} loop = {true}>
                   </LottieView>
         </SafeAreaView>
-        <TextInput
-        style={styles.input}
-        onChangeText={onChangeText}
-        value={text}
-        placeholderTextColor = {'black'}
-        placeholder="Choose a unique username"
+        <Text>{result}</Text>
+        <TextInput style = {{
+          height: 50,
+          margin: 12,
+          borderWidth: 1,
+          padding: 10,
+          width : 300,
+          borderColor : 'green',
+          fontSize : 18,
+          color : colors
+        }}
+      onChangeText={text => TC(text)}
+      value={text}
+      placeholderTextColor = {'black'}
+      placeholder="Choose a unique username"
       />
         <TouchableOpacity onPress={()=> submit()} style = {{
           height: 40,
@@ -79,3 +174,7 @@ const styles = StyleSheet.create({
   },
 });
 export default Names;
+
+function stg() {
+  throw new Error("Function not implemented.");
+}

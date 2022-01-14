@@ -29,10 +29,10 @@ const StartingPage = ({navigation}) => {
   
    
    
-   const startGame = () => {
-    navigation.navigate("Name", {});}
+const startGame = () => {
+    navigation.navigate("Search_page", {});}
   const createAcc = () => {
-    navigation.navigate("Home", {});
+    navigation.navigate("Name", {});
   }
   useEffect(() => {
     if(loading == true)
@@ -69,7 +69,7 @@ const StartingPage = ({navigation}) => {
                     if(rowData == "")
                     {
                     return(
-                        <TouchableOpacity key = {index} style = {styles.sectionDescription} onPress={()=>startGame()}>
+                        <TouchableOpacity key = {index} style = {styles.sectionDescription} onPress={()=>createAcc()}>
                           <Text  style = {styles.sectionTitle}>
                             Create Account
                           </Text>
@@ -78,7 +78,7 @@ const StartingPage = ({navigation}) => {
                     else
                     {
                       return(
-                            <TouchableOpacity key = {index}  style = {styles.sectionDescription} onPress={()=>console.log("ok")}>
+                            <TouchableOpacity key = {index}  style = {styles.sectionDescription} onPress={()=>startGame()}>
                               <Text  style = {styles.sectionTitle}>
                                 Start Yahtzee
                               </Text>

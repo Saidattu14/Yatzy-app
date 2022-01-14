@@ -1,3 +1,13 @@
 {
-    "UserName": ""
-  }
+    
+    "List": [
+        {"Name": "New", "Status": "onlene"},
+        {"Name": "Open", "Status": "Online"},
+        {"Name": "Close1", "Status": "Online"},
+        {"Name": "New1", "Status": "onlene"},
+        {"Name": "Open2", "Status": "Online"},
+        {"Name": "New23", "Status": "onlene"},
+        {"Name": "Ope33n", "Status": "Online"}
+      ]
+    
+}

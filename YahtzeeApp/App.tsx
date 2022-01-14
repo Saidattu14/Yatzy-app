@@ -24,6 +24,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Names from './Components/Names';
 import StartingPage from './Components/Home1';
 import HomeSearch from './Components/Home2';
+
 export interface State {
   Navigation : any,
 }
@@ -130,7 +131,9 @@ function App() {
           options={{
             headerShown: false,
         }}/>
+       
       </Stack.Navigator>
+      
     </NavigationContainer>
   );
 }

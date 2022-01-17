@@ -112,6 +112,7 @@ const HomeSearch = ({navigation}) => {
       ws.onmessage = (e) => {
         // a message was received
         const a = JSON.parse(e.data);
+        console.log(a)
         setData(a.Data)
         setList(a.Data)
       }

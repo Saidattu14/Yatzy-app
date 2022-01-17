@@ -67,8 +67,6 @@ const Names = ({navigation}) => {
 
        await messaging().registerDeviceForRemoteMessages();
        let token = await messaging().getToken();
-       let a1 = await AsyncStorage.setItem("MyName", text);
-       let a2 = await AsyncStorage.setItem("FCMtoken",token);
        if(state.ws != null)
        {
         let obj = {
@@ -76,7 +74,8 @@ const Names = ({navigation}) => {
           "MyName" : text,
           "FCMToken" : token,
         }
-        
+        await AsyncStorage.setItem("MyName", text);
+        await AsyncStorage.setItem("FCMtoken",token);
         ws.send(JSON.stringify(obj));}
        }
      } catch (error) {
@@ -85,7 +84,7 @@ const Names = ({navigation}) => {
    }
 
    useEffect(() => {
-    ws.onmessage = (e) => {
+    ws.onmessage = async(e) => {
       // a message was received
       const a = JSON.parse(e.data);
       if(a.Method == "UserValid")
@@ -93,6 +92,7 @@ const Names = ({navigation}) => {
       
        if(a.Result == "true")
        {
+        
         navigation.navigate("Search_page", {});
        }
       }

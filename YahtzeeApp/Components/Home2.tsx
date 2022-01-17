@@ -44,6 +44,21 @@ const HomeSearch = ({navigation}) => {
   const [Data,setData] = useState(null);
   const [list, setList] = useState(null);
   var ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
+  const sendmsg = async(ws:WebSocket,nw:any) => {
+    
+    if(msg == true)
+    {
+      
+      let a2 = await AsyncStorage.getItem("MyName")
+      let obj = {
+        "Method" : "UserList",
+        "MyName" : a2
+      }
+      console.log(obj)
+      ws.send(JSON.stringify(obj));
+      SetMsg(false);
+    }
+  }
   if(state.ws == null)
   {
     ws.onopen = async() => {
@@ -52,30 +67,16 @@ const HomeSearch = ({navigation}) => {
           type: 'SetSocket',
           ws: ws,
         });
-        if(msg == true)
-        {
-          let a2 = await AsyncStorage.getItem("MyName")
-          let obj = {
-            "Method" : "UserList",
-            "MyName" : a2
-          }
-          console.log(obj)
-          ws.send(JSON.stringify(obj));
-          SetMsg(false);
-        }
     };
-     
+    
   }
-  try {
-    state.ws.onmessage = (e) => {
-      // a message was received
-      const a = JSON.parse(e.data);
-      setList(a.Data)
-      setData(a.Data)
-    }
-  } catch (error) {
-    console.log("NotConnected")
+  else
+  {
+  
+   ws = state.ws;
+   sendmsg(state.ws,2);
   }
+ 
   const renderItem = ({ item }) => (
     
     <UserList Value = {item} />
@@ -107,9 +108,20 @@ const HomeSearch = ({navigation}) => {
     return true;
   };
   useEffect(() => {
+    try {
+      ws.onmessage = (e) => {
+        // a message was received
+        const a = JSON.parse(e.data);
+        setData(a.Data)
+        setList(a.Data)
+      }
+    } catch (error) {
+      console.log("NotConnected")
+    }
     BackHandler.addEventListener("hardwareBackPress", backAction);
-    return () =>
+    return () => {
       BackHandler.removeEventListener("hardwareBackPress", backAction);
+    }
   },[])
   return (
         <View style = {styles.main}>

@@ -3,6 +3,7 @@
  import {DataContext} from '../reducers/datalayer'
  import AsyncStorage from '@react-native-async-storage/async-storage';
  import messaging from '@react-native-firebase/messaging';
+ import { CommonActions } from '@react-navigation/native';
  import {SafeAreaView,
    ScrollView,
    StatusBar,
@@ -13,9 +14,6 @@
    TouchableOpacity
  } from 'react-native';
  
-
-
-
 const StartingPage = ({navigation}) => {
 
   const { state, dispatch } = React.useContext(DataContext)
@@ -23,17 +21,27 @@ const StartingPage = ({navigation}) => {
   const [a,setA] = useState([""]);
   
 const startGame = () => {
-    navigation.navigate("Search_page", {});}
+  navigation.navigate("Search_page", {});     
+  
+  
+  }
   
   const createAcc = () => {
-    navigation.navigate("Name", {});
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          { name: "Name" },
+        ],
+      })
+    );
   }
   useEffect(() => {
     
     if(loading == true)
     {
       const a1 = async() => {
-      
+        
         let a2 = await AsyncStorage.getItem("MyName")
         if(a2 == null)
         {
@@ -47,7 +55,6 @@ const startGame = () => {
           setA(a)
           SetLoading(false);
         }
-
         return a2;
       };
       a1();
@@ -83,7 +90,6 @@ const startGame = () => {
                       )
                     }
                   })
-                  
                 }
       </View>
    );

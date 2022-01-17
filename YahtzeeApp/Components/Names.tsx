@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet, TextInput,Text,TouchableOpacity } from "react-native";
+import { SafeAreaView, StyleSheet, TextInput,Text,TouchableOpacity, TimePickerAndroid } from "react-native";
 import styled from 'styled-components/native';
 import LottieView from 'lottie-react-native';
 import {DataContext} from '../reducers/datalayer'
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CommonActions } from '@react-navigation/native';
 const Names = ({navigation}) => {
   
    const { state, dispatch } = React.useContext(DataContext)
    const [text, onChangeText] = React.useState("");
    const [loading,setLoading] = useState(true);
+   const [loading1,setLoading1] = useState(true);
    const [result, setResult] = useState('');
    const [Data, setData] = useState();
    const [colors, setColor] = useState('red');
@@ -32,35 +34,11 @@ const Names = ({navigation}) => {
     }
     };
    }
-    ws.onmessage = (e) => {
-      // a message was received
-      const a = JSON.parse(e.data);
-      if(a.Method == "UserValid")
-      {
-        if(a.Result == "true")
-        {
-          const  stg = async() => 
-          {
-            let token = await messaging().getToken();
-            await AsyncStorage.setItem("MyName", text);
-            await AsyncStorage.setItem("FCMtoken",token);
-          }
-          stg();
-          setResult("UserName Added Sucesssfully")
-          navigation.navigate("Search_page", {})
-          
-        }
-        else
-        {
-          setResult("Failure")
-        }
-      }
-      else if(a.Method == "UserList")
-      {
-        console.log(a.Data)
-        setData(a.Data)
-      }
-    };
+   else
+   {
+     ws = state.ws;
+   }
+   
     const TC = (text : String) => {
       onChangeText(text);
       if(text != "")
@@ -80,6 +58,7 @@ const Names = ({navigation}) => {
         }
       }
     }
+    
    const submit = async() => {
      try {
        
@@ -88,6 +67,8 @@ const Names = ({navigation}) => {
 
        await messaging().registerDeviceForRemoteMessages();
        let token = await messaging().getToken();
+       let a1 = await AsyncStorage.setItem("MyName", text);
+       let a2 = await AsyncStorage.setItem("FCMtoken",token);
        if(state.ws != null)
        {
         let obj = {
@@ -95,14 +76,36 @@ const Names = ({navigation}) => {
           "MyName" : text,
           "FCMToken" : token,
         }
+        
         ws.send(JSON.stringify(obj));}
        }
      } catch (error) {
        console.log("Error")
      }
    }
+
    useEffect(() => {
-   },[])
+    ws.onmessage = (e) => {
+      // a message was received
+      const a = JSON.parse(e.data);
+      if(a.Method == "UserValid")
+      {
+      
+       if(a.Result == "true")
+       {
+        navigation.navigate("Search_page", {});
+       }
+      }
+      else if(a.Method == "UserList")
+      {
+        console.log(a.Data)
+        setData(a.Data)
+      }
+    };
+     return () => {
+       
+     }
+   }, [])
     return (
     <SafeAreaView style = {styles.main}>
        <SafeAreaView style = {styles.sectionContainer}>
@@ -181,3 +184,7 @@ export default Names;
 function stg() {
   throw new Error("Function not implemented.");
 }
+function time(time: any) {
+  throw new Error("Function not implemented.");
+}
+

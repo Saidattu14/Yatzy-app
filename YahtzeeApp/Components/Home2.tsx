@@ -9,12 +9,25 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export interface State {
   name: String;
   status: String;
+  FCM : String,
 }
 
-const UserList : React.FC<{Value : State}> = ({Value}) => {
+const UserList : React.FC<{Value : State, ws : WebSocket, nv: any}> = ({Value,ws,nv}) => {
+
+  const RequestFcm = async() => {
+    let a2 = await AsyncStorage.getItem("MyName")
+    let obj = {
+      "Method" : "RequestMsg",
+      "MyName" : a2,
+      "OpponentName" : Value.name,
+      "OpponentFCM" : Value.FCM,
+    }
+    ws.send(JSON.stringify(obj));
+    nv.navigate("Home", {});
+  }
   return (
    <SafeAreaView  style = {styles.sectionDescription}>
-    <View style = {styles.sectionList}>
+    <View style = {styles.sectionList} >
              <SafeAreaView style = {styles.sectionProfile}>
                 <Image
                   style = {styles.ImageData}
@@ -27,11 +40,11 @@ const UserList : React.FC<{Value : State}> = ({Value}) => {
                 <Text style = {styles.sectionName}>{Value.name}</Text>
                 <Text style = {styles.sectionStatus}>{Value.status}</Text>
               </SafeAreaView>
-              <SafeAreaView style = {styles.sectionRequest}>
-                <Text style = {styles.sectionRequestText}>
+              <TouchableOpacity style = {styles.sectionRequest} onPress = {() => RequestFcm()}>
+                <Text style = {styles.sectionRequestText} >
                 Send Request
                 </Text>
-              </SafeAreaView>
+              </TouchableOpacity>
             </View>
    </SafeAreaView>
 );
@@ -41,8 +54,8 @@ const HomeSearch = ({navigation}) => {
   const [msg,SetMsg] = useState(true);
   const [name,setName] = useState('');
   const [text, setText] = useState('');
-  const [Data,setData] = useState(null);
-  const [list, setList] = useState(null);
+  const [Data,setData] = useState([]);
+  const [list, setList] = useState([]);
   var ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
   const sendmsg = async(ws:WebSocket,nw:any) => {
     
@@ -79,7 +92,7 @@ const HomeSearch = ({navigation}) => {
  
   const renderItem = ({ item }) => (
     
-    <UserList Value = {item} />
+    <UserList Value = {item} ws = {ws} nv = {navigation}/>
   );
   const TC = (text : String) => {
     
@@ -112,7 +125,6 @@ const HomeSearch = ({navigation}) => {
       ws.onmessage = (e) => {
         // a message was received
         const a = JSON.parse(e.data);
-        console.log(a)
         setData(a.Data)
         setList(a.Data)
       }

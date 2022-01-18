@@ -13,7 +13,7 @@ const Names = ({navigation}) => {
    const [loading,setLoading] = useState(true);
    const [loading1,setLoading1] = useState(true);
    const [result, setResult] = useState('');
-   const [Data, setData] = useState();
+   const [Data, setData] = useState([]);
    const [colors, setColor] = useState('red');
    var ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
    if(state.ws == null)

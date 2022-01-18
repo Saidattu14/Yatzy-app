@@ -14,6 +14,8 @@
    TouchableOpacity
  } from 'react-native';
  
+ 
+
 const StartingPage = ({navigation}) => {
 
   const { state, dispatch } = React.useContext(DataContext)
@@ -42,6 +44,7 @@ const startGame = () => {
     {
       const a1 = async() => {
         
+        
         let a2 = await AsyncStorage.getItem("MyName")
         if(a2 == null)
         {
@@ -59,6 +62,32 @@ const startGame = () => {
       };
       a1();
     }
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Message handled in the background!', remoteMessage);
+      navigation.navigate("Request_page", {});
+    });
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.notification,
+      );
+      navigation.navigate('Request_page',{
+        Key : remoteMessage
+      });
+    });
+    messaging()
+    .getInitialNotification()
+    .then(remoteMessage => {
+      if (remoteMessage) {
+        // console.log(
+        //   'Notification caused app to open from quit state:',
+        //   remoteMessage.notification,
+        // );
+        navigation.navigate('Request_page',{
+          Key: remoteMessage,
+        });
+      }
+    });
   }, []);
    return (
          <View style = {styles.main}>

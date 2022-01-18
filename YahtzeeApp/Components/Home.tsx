@@ -64,62 +64,39 @@ const sendmsg = () => {
   
   ws.send(JSON.stringify(obj));
 }
-ws.onopen = () => {
-  console.log('connected')
-  if(loading == true)
-  {
-  sendmsg();
-  setLoading(false);
-  }
-};      
-ws.onerror = (e) => {
-  console.log(e.message);
-};
+// ws.onopen = () => {
+//   console.log('connected')
+//   if(loading == true)
+//   {
+//   sendmsg();
+//   setLoading(false);
+//   }
+// };      
+// ws.onerror = (e) => {
+//   console.log(e.message);
+// };
 
-ws.onmessage = (e) => {
-  console.log("message1");
-  dispatch({
-    type: 'SetSocket',
-    ws: ws,
-    });
-    const a = JSON.parse(e.data);
-    navigation.navigate("Game_page", {
-      paramKey: a.Method,
-      paramKey1 : a.OppMethod
-    })
-}
-ws.onclose = (e) => {
-    console.log(e.code, e.reason);
-};
+// ws.onmessage = (e) => {
+//   console.log("message1");
+//   dispatch({
+//     type: 'SetSocket',
+//     ws: ws,
+//     });
+//     const a = JSON.parse(e.data);
+//     navigation.navigate("Game_page", {
+//       paramKey: a.Method,
+//       paramKey1 : a.OppMethod
+//     })
+// }
+// ws.onclose = (e) => {
+//     console.log(e.code, e.reason);
+// };
   useEffect(() => {
     // // Assume a message-notification contains a "type" property in the data payload of the screen to open
-    // messaging().onNotificationOpenedApp(remoteMessage => {
-    //   console.log(
-    //     'Notification caused app to open from background state:',
-    //     remoteMessage.notification,
-    //   );
-    //   navigation.navigate("Request_page", {
-    //     paramKey: null,
-    //   })
-      
-    // });
+    
 
-    // // Check whether an initial notification is available
-    // messaging()
-    //   .getInitialNotification()
-    //   .then(remoteMessage => {
-    //     if (remoteMessage) {
-    //       console.log(
-    //         'Notification caused app to open from quit state:',
-    //         remoteMessage.notification,
-    //       );
-    //     }
-    //     navigation.navigate("Request_page", {
-    //       paramKey: null,
-    //     })
-        
-      //   setLoading(false);
-      // });
+    // Check whether an initial notification is available
+   
   }, []);
 
   return (

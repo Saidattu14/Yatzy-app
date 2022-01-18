@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity } from "react-native";
 export interface State {
   name: String;
@@ -9,30 +10,31 @@ export interface State {
 
 const Request_page = ({navigation,route}) => {
   const {Key} = route.params
-  
+  const navigate = async() => {
+    
+    navigation.navigate('Home',{
+      OppName: Key.data.OpponentName,
+      MyName : await AsyncStorage.getItem("MyName")
+    })
+   
+  }
   return (
     
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
           <Text style={styles.modalText}>{Key.notification.title} </Text>
             <Text style={styles.modalText}>{Key.notification.body} </Text>
+            <Text style={styles.modalText}>Are You Interested to Play? </Text>
             <View style = {styles.buttonsstyle}>
             <TouchableOpacity
               style={[styles.button, styles.buttonClose]}
-              // onPress = {() => navigation.navigate('ThirdPage',{
-              //   paramKey: paramKey,
-              //   level : "Medium",
-              // })}
+              onPress = {() => navigate()}
             >
             <Text style={styles.textStyle}>Yes</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.buttonClose]}
-              // onPress = {() => navigation.navigate('ThirdPage',{
-              //   paramKey: paramKey,
-              //   level : "Medium",
-  
-              // })}
+              
             >
             <Text style={styles.textStyle}>No</Text>
             </TouchableOpacity>
@@ -84,7 +86,9 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center"
+    textAlign: "center",
+    color : 'green',
+    fontSize : 15,
   },
   buttonsstyle : {
     justifyContent : 'space-evenly',

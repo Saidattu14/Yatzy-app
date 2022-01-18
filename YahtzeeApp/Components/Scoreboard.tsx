@@ -13,6 +13,8 @@ export interface State {
   Fours:Number;
   Fives:Number;
   Sixs:Number;
+  Sum : Number;
+  Bonous : Number,
   Pair:Number;
   TwoPair:Number;
   ThreeofKind:Number;
@@ -22,6 +24,7 @@ export interface State {
   LargeStraight:Number;
   Chance:Number;
   Yatzy :Number;
+  Total : Number;
 }
 export interface Colors{
   Ones: any;
@@ -294,13 +297,13 @@ const theme = () => {
           </View>
           <View style = {styles.highlight}>
             <Text  style = {styles.sectionTitle}>Sum</Text>
-            <Text  style = {styles.sectionTitleUser}>You</Text>
-            <Text  style = {styles.sectionTitleOpp}>Opponent</Text>
+            <Text  style = {styles.sectionTitleUser}>{score.Sum}</Text>
+            <Text  style = {styles.sectionTitleOpp}>{oppscore.Sum}</Text>
           </View>
           <View style = {styles.highlight}>
             <Text  style = {styles.sectionTitle}>Bonous</Text>
-            <Text  style = {styles.sectionTitleUser}>You</Text>
-            <Text  style = {styles.sectionTitleOpp}>Opponent</Text>
+            <Text  style = {styles.sectionTitleUser}>{score.Bonous}</Text>
+            <Text  style = {styles.sectionTitleOpp}>{oppscore.Bonous}</Text>
           </View>
           <View style = {styles.highlight}>
             <Text  style = {styles.sectionTitle}>Pair</Text>

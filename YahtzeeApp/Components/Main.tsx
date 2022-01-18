@@ -3,8 +3,8 @@ import LottieView from 'lottie-react-native';
 import {Image,SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,View,TouchableOpacity,
   DrawerLayoutAndroid,TextInput
 } from 'react-native';
-import messaging from '@react-native-firebase/messaging';
-import {Colors,DebugInstructions,Header,LearnMoreLinks,ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
+
+
 import Scoreboard from './Scoreboard';
 import RequestPage from './Request';
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
@@ -354,7 +354,7 @@ const Search : React.FC<{websocket: WebSocket;vl: String,v2:String}> = ({websock
             <View style = {styles.sectionButtonMain}>
               <TouchableOpacity style = {styles.sectionButoon} onPress={() => drawer.current.openDrawer()}>
                   <Text  style = {styles.sectionButtonData}>
-                  Score
+                  Update Score
                   </Text>
               </TouchableOpacity>
             </View>
@@ -419,7 +419,7 @@ const Search : React.FC<{websocket: WebSocket;vl: String,v2:String}> = ({websock
             <View style = {styles.sectionButtonMain}>
               <TouchableOpacity style = {styles.sectionButoon} >
                   <Text  style = {styles.sectionButtonData}>
-                    Your Score :12
+                    Update
                   </Text>
               </TouchableOpacity>
             </View>
@@ -478,6 +478,7 @@ const styles = StyleSheet.create({
     borderWidth : 1,
     borderRadius : 1,
     borderColor : 'green',
+    
   },
   sectionButtonData: {
     textAlign : 'center',
@@ -501,7 +502,7 @@ const styles = StyleSheet.create({
     borderWidth : 1,
     borderRadius : 20,
     borderColor : 'green',
-    backgroundColor : 'green'
+    backgroundColor : '#adff2f'
   },
   sectionProfileData: {
   

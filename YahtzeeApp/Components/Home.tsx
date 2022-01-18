@@ -18,8 +18,6 @@ const Home = ({navigation,route}) => {
   const [loading, setLoading] = useState(true);
   const [initialRoute, setInitialRoute] = useState('Home');
   var ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
-
-
 const sendmsg = () => {
   let obj = {
     "Method" : "Connect",
@@ -64,39 +62,46 @@ const sendmsg = () => {
   
   ws.send(JSON.stringify(obj));
 }
-// ws.onopen = () => {
-//   console.log('connected')
-//   if(loading == true)
-//   {
-//   sendmsg();
-//   setLoading(false);
-//   }
-// };      
-// ws.onerror = (e) => {
-//   console.log(e.message);
-// };
 
-// ws.onmessage = (e) => {
-//   console.log("message1");
-//   dispatch({
-//     type: 'SetSocket',
-//     ws: ws,
-//     });
-//     const a = JSON.parse(e.data);
-//     navigation.navigate("Game_page", {
-//       paramKey: a.Method,
-//       paramKey1 : a.OppMethod
-//     })
-// }
-// ws.onclose = (e) => {
-//     console.log(e.code, e.reason);
-// };
-  useEffect(() => {
-    // // Assume a message-notification contains a "type" property in the data payload of the screen to open
+if(state.ws == null)
+{
+
+  ws.onopen = () => {
+  console.log('connected')
+  dispatch({
+    type: 'SetSocket',
+    ws: ws,
+    });
+  if(loading == true)
+  {
+  sendmsg();
+  setLoading(false);
+  }
+ };  
+  
+}
+else
+{
+ ws = state.ws;
+ sendmsg();
+}
+ws.onmessage = (e) => {
+      const a = JSON.parse(e.data);
+      navigation.navigate("Game_page", {
+        paramKey: a.Method,
+        paramKey1 : a.OppMethod
+      })
+  }
+   ws.onerror = (e) => {
+      console.log(e.message);
+    };
     
-
-    // Check whether an initial notification is available
-   
+    
+    ws.onclose = (e) => {
+        console.log(e.code, e.reason);
+    };
+  useEffect(() => {
+    
   }, []);
 
   return (

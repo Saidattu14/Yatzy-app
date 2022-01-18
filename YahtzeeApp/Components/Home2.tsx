@@ -23,7 +23,10 @@ const UserList : React.FC<{Value : State, ws : WebSocket, nv: any}> = ({Value,ws
       "OpponentFCM" : Value.FCM,
     }
     ws.send(JSON.stringify(obj));
-    nv.navigate("Home", {});
+    nv.navigate("Home", {
+      OppName: Value.name,
+      MyName : await AsyncStorage.getItem("MyName")
+    });
   }
   return (
    <SafeAreaView  style = {styles.sectionDescription}>

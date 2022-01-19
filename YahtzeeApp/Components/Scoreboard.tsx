@@ -43,10 +43,6 @@ export interface Colors{
   Chance: any;
   Yatzy : any;
 }
-
-
-
-
 const Scoreboard :React.FC<{score: State,
   originalscores : State;
   colors: Colors;
@@ -118,7 +114,6 @@ const Scoreboard :React.FC<{score: State,
     {
       colors.FullHouse = 'red'
     }
-
 
   }
   const update = (data : String,Value : Number) => {
@@ -210,7 +205,6 @@ const Scoreboard :React.FC<{score: State,
         "Colors" : colors,
         "Checking" : data
       }
-      console.log(obj.Colors)
       websocket.send(JSON.stringify(obj));
       if(count == true)
       {setCount(false);}

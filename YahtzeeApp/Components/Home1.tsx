@@ -44,7 +44,7 @@ const startGame = () => {
     {
       const a1 = async() => {
         
-        
+      
         let a2 = await AsyncStorage.getItem("MyName")
         if(a2 == null)
         {

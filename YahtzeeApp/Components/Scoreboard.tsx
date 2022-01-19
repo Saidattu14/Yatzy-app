@@ -110,7 +110,7 @@ const Scoreboard :React.FC<{score: State,
     {
       colors.LargeStraight = 'red'
     }
-    if(data == "Yahtzy" && colors.Yatzy == "yellow")
+    if(data == "Yatzy" && colors.Yatzy == "yellow")
     {
       colors.Yatzy = 'red'
     }
@@ -199,6 +199,7 @@ const Scoreboard :React.FC<{score: State,
       }
       if(data != "Yatzy")
       {
+        console.log("hello")
         var temp = originalscores.Yatzy;
         score.Yatzy = temp;
       }
@@ -209,6 +210,7 @@ const Scoreboard :React.FC<{score: State,
         "Colors" : colors,
         "Checking" : data
       }
+      console.log(obj.Colors)
       websocket.send(JSON.stringify(obj));
       if(count == true)
       {setCount(false);}
@@ -384,7 +386,7 @@ const theme = () => {
             <Text  style = {styles.sectionTitleOpp}>{oppscore.Chance}</Text>
           </View>
           <View style = {styles.highlight}>
-            <Text  style = {styles.sectionTitle}>Yahtzy</Text>
+            <Text  style = {styles.sectionTitle}>Yatzy</Text>
             <TextData style = {
               {
                 color : colors.Yatzy
@@ -394,8 +396,8 @@ const theme = () => {
           </View>
           <View style = {styles.highlight}>
             <Text  style = {styles.sectionTitle}>Total Score</Text>
-            <Text  style = {styles.sectionTitleUser}>You</Text>
-            <Text  style = {styles.sectionTitleOpp}>Opponent</Text>
+            <Text  style = {styles.sectionTitleUser}>{score.Total}</Text>
+            <Text  style = {styles.sectionTitleOpp}>{oppscore.Total}</Text>
           </View> 
   </View>
   );

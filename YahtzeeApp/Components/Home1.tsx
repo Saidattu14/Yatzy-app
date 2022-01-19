@@ -67,6 +67,8 @@ const startGame = () => {
 
     });
     messaging().onNotificationOpenedApp(remoteMessage => {
+      if(remoteMessage)
+      {
       console.log(
         'Notification caused app to open from background state:',
         remoteMessage.notification,
@@ -74,6 +76,7 @@ const startGame = () => {
       navigation.navigate('Request_page',{
         Key : remoteMessage
       });
+     }
     });
     messaging()
     .getInitialNotification()

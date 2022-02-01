@@ -21,19 +21,15 @@ public class WebSocketServerApplication {
 
 		SpringApplication.run(WebSocketServerApplication.class, args);
 		try {
-			// [START initialize]
 			FileInputStream serviceAccount = new FileInputStream("key.json");
 			FirebaseOptions options = FirebaseOptions.builder()
 					.setCredentials(GoogleCredentials.fromStream(serviceAccount))
 					.setProjectId("myadmin14")
 					.build();
 			FirebaseApp.initializeApp(options);
-
-			// [END initialize]
 		} catch (IOException e) {
 			System.out.println("ERROR: invalid service account credentials. See README.");
 			System.out.println(e.getMessage());
-
 			System.exit(1);
 		}
 

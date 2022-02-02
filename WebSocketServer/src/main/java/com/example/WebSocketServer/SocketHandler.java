@@ -67,6 +67,7 @@ public class SocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
         session.close();
+        this.ClientData.remove(session);
         getSessions();
     }
 

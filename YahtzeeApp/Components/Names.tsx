@@ -15,8 +15,6 @@ const Names = ({navigation}) => {
    const [result, setResult] = useState('');
    const [Data, setData] = useState([]);
    const [colors, setColor] = useState('red');
-   
-   
     const TC = (text : String) => {
       onChangeText(text);
       if(text != "")

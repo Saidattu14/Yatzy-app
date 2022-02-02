@@ -9,7 +9,7 @@ public class Scoreboard {
     private List<Integer> list=new ArrayList<Integer>();
     public int Ones_Twos_Threes_Fours_Fives_Sixs(List<Integer> list,int value)
     {
-        System.out.println(list);
+
         int score = 0;
         for(int i = 0;i<list.size();i++)
         {
@@ -272,7 +272,6 @@ public class Scoreboard {
             js.put("TwoPair",Score);
             ct++;
         }
-        System.out.println(ct);
         return js;
     }
 }

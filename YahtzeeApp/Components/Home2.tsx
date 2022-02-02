@@ -59,39 +59,27 @@ const HomeSearch = ({navigation}) => {
   const [text, setText] = useState('');
   const [Data,setData] = useState([]);
   const [list, setList] = useState([]);
-  var ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
-  const sendmsg = async(ws:WebSocket,nw:any) => {
+  var ws;
+  const sendmsg = async(ws:WebSocket) => {
     
     if(msg == true)
     {
-      
-      let a2 = await AsyncStorage.getItem("MyName")
-      let obj = {
-        "Method" : "UserList",
-        "MyName" : a2
+      try {
+        let a2 = await AsyncStorage.getItem("MyName")
+        let obj = {
+          "Method" : "UserList",
+          "MyName" : a2
+        }
+        console.log(obj)
+        ws.send(JSON.stringify(obj));
+        SetMsg(false);
+      } catch (error) {
+        console.log(error);
       }
-      console.log(obj)
-      ws.send(JSON.stringify(obj));
-      SetMsg(false);
+     
     }
   }
-  if(state.ws == null)
-  {
-    ws.onopen = async() => {
-        console.log('connected')
-        dispatch({
-          type: 'SetSocket',
-          ws: ws,
-        });
-    };
-    
-  }
-  else
-  {
   
-   ws = state.ws;
-   sendmsg(state.ws,2);
-  }
  
   const renderItem = ({ item }) => (
     
@@ -123,7 +111,32 @@ const HomeSearch = ({navigation}) => {
     );
     return true;
   };
+  const addwebsocket = () => {
+    if(state.ws == null)
+    {
+      ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
+      ws.onopen = async() => {
+          console.log('connected')
+          dispatch({
+            type: 'SetSocket',
+            ws: ws,
+          });
+          sendmsg(ws);
+      };
+      
+    
+    }
+    else
+    {
+    
+     ws = state.ws;
+     sendmsg(ws);
+    }
+     return ws;
+  }
   useEffect(() => {
+    ws = addwebsocket()
+    
     try {
       ws.onmessage = (e) => {
         // a message was received
@@ -131,6 +144,15 @@ const HomeSearch = ({navigation}) => {
         setData(a.Data)
         setList(a.Data)
       }
+      ws.onerror = (e) => {
+        // an error occurred
+        console.log(e.message);
+      };
+      
+      ws.onclose = (e) => {
+        // connection closed
+        console.log(e.code, e.reason);
+      };
     } catch (error) {
       console.log("NotConnected")
     }

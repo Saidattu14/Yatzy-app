@@ -7,7 +7,7 @@ import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CommonActions } from '@react-navigation/native';
 const Names = ({navigation}) => {
-  
+   var ws;
    const { state, dispatch } = React.useContext(DataContext)
    const [text, onChangeText] = React.useState("");
    const [loading,setLoading] = useState(true);
@@ -15,29 +15,7 @@ const Names = ({navigation}) => {
    const [result, setResult] = useState('');
    const [Data, setData] = useState([]);
    const [colors, setColor] = useState('red');
-   var ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
-   if(state.ws == null)
-   {
-   ws.onopen = () => {
-    console.log('connected')
-    if(loading == true)
-    {
-      dispatch({
-        type: 'SetSocket',
-        ws: ws,
-      });
-      let obj = {
-        "Method" : "Validation",
-      }
-      ws.send(JSON.stringify(obj));
-      setLoading(false);
-    }
-    };
-   }
-   else
-   {
-     ws = state.ws;
-   }
+   
    
     const TC = (text : String) => {
       onChangeText(text);
@@ -58,7 +36,6 @@ const Names = ({navigation}) => {
         }
       }
     }
-    
    const submit = async() => {
      try {
        
@@ -76,14 +53,44 @@ const Names = ({navigation}) => {
         }
         await AsyncStorage.setItem("MyName", text);
         await AsyncStorage.setItem("FCMtoken",token);
-        ws.send(JSON.stringify(obj));}
+        state.ws.send(JSON.stringify(obj));}
+
        }
      } catch (error) {
        console.log("Error")
      }
    }
-
+   const addwebsocket = () => {
+   
+    if(state.ws == null)
+    {
+    ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
+    ws.onopen = () => {
+     
+     if(loading == true)
+     {
+       dispatch({
+         type: 'SetSocket',
+         ws: ws,
+       });
+       let obj = {
+         "Method" : "Validation",
+       }
+       
+       ws.send(JSON.stringify(obj));
+       setLoading(false);
+     }
+     };
+     return ws;
+    }
+    else
+    {
+      ws = state.ws;
+    }
+    return ws;
+   }
    useEffect(() => {
+    ws = addwebsocket();
     ws.onmessage = async(e) => {
       // a message was received
       const a = JSON.parse(e.data);
@@ -94,14 +101,15 @@ const Names = ({navigation}) => {
        {
         
         navigation.navigate("Search_page", {});
+        
        }
       }
       else if(a.Method == "UserList")
       {
-        console.log(a.Data)
         setData(a.Data)
       }
     };
+  
      return () => {
        
      }

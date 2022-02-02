@@ -26,7 +26,7 @@ const startGame = () => {
   navigation.navigate("Search_page", {});     
   
   
-  }
+}
   
   const createAcc = () => {
     navigation.dispatch(

@@ -66,17 +66,22 @@ public class SocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
+        session.close();
+        getSessions();
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-
+       System.out.println(session);
         Data d = new Data(new JSONObject(), new Hashtable<>(),new JSONObject());
         this.ClientData.put(session,new Client(d));
+        this.sessions.add(session);
+
     }
 
-    public List getSessions() {
-        return sessions;
+    public void getSessions() {
+
+        System.out.println(this.sessions.size());
     }
     public void setSessions(List sessions) {
         this.sessions = sessions;
@@ -152,7 +157,7 @@ public class SocketHandler extends TextWebSocketHandler {
         }
         catch (Exception ex)
         {
-          System.out.println("Error");
+          System.out.println("UnMatched Error");
         }
     }
     public void  UserListData(WebSocketSession s, JSONObject object)
@@ -171,7 +176,7 @@ public class SocketHandler extends TextWebSocketHandler {
         }
         catch (Exception ex)
         {
-            System.out.println("Error");
+            System.out.println("Error List");
         }
     }
     public void  UserValidation(WebSocketSession s) throws IOException {
@@ -186,7 +191,7 @@ public class SocketHandler extends TextWebSocketHandler {
         }
         catch (Exception ex)
         {
-            System.out.println("Error");
+            System.out.println("Error user");
         }
     }
     public void  AddUser(WebSocketSession s,JSONObject object) throws IOException {
@@ -195,7 +200,6 @@ public class SocketHandler extends TextWebSocketHandler {
 
             String s2 = object.getString("MyName");
             String s3 = object.getString("FCMToken");
-            System.out.println(this.UserList.get(s2));
             if(this.UserList.get(s2) == null)
             {
                 Users ur = new Users(s2,s3,"Online");
@@ -221,7 +225,6 @@ public class SocketHandler extends TextWebSocketHandler {
             e1.put("Result", "false");
             TextMessage msg1 = new TextMessage(e1.toString());
             s.sendMessage(msg1);
-            System.out.println("Error");
         }
     }
     public void  UserRequest(WebSocketSession s,JSONObject object) throws ExecutionException, FirebaseMessagingException, InterruptedException {

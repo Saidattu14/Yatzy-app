@@ -34,7 +34,7 @@ public class Data {
     }
 
     public void setEstimated_score(JSONObject estimated_score) {
-        System.out.println(estimated_score);
+
         this.estimated_score = estimated_score;
     }
 

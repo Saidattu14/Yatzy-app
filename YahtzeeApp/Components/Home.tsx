@@ -17,8 +17,8 @@ const Home = ({navigation,route}) => {
   const { state, dispatch } = React.useContext(DataContext)
   const [loading, setLoading] = useState(true);
   const [initialRoute, setInitialRoute] = useState('Home');
-  var ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
-const sendmsg = () => {
+  var ws;
+const sendmsg = (ws: WebSocket) => {
   let obj = {
     "Method" : "Connect",
     "MyName" : MyName,
@@ -62,46 +62,49 @@ const sendmsg = () => {
   
   ws.send(JSON.stringify(obj));
 }
-
-if(state.ws == null)
-{
-
-  ws.onopen = () => {
-  console.log('connected')
-  dispatch({
-    type: 'SetSocket',
-    ws: ws,
-    });
-  if(loading == true)
+const addwebsocket = () => {
+    if(state.ws == null)
+      {
+        ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
+        ws.onopen = () => {
+        console.log('connected')
+        dispatch({
+          type: 'SetSocket',
+          ws: ws,
+          });
+        if(loading == true)
+        {
+         sendmsg(ws);
+         setLoading(false);
+        }
+      };    
+    }
+  else
   {
-  sendmsg();
-  setLoading(false);
+   ws = state.ws;
+   sendmsg(ws);
   }
- };  
+  return ws;
+}
+
+
   
-}
-else
-{
- ws = state.ws;
- sendmsg();
-}
-ws.onmessage = (e) => {
+  useEffect(() => {
+    ws = addwebsocket();
+    ws.onmessage = (e) => {
       const a = JSON.parse(e.data);
       navigation.navigate("Game_page", {
         paramKey: a.Method,
         paramKey1 : a.OppMethod
       })
-  }
-   ws.onerror = (e) => {
-      console.log(e.message);
-    };
-    
-    
+    }
+    ws.onerror = (e) => {
+        console.log(e.message);
+      };
+      
     ws.onclose = (e) => {
-        console.log(e.code, e.reason);
+          console.log(e.code, e.reason);
     };
-  useEffect(() => {
-    
   }, []);
 
   return (

@@ -15,8 +15,9 @@ export interface State {
 const UserList : React.FC<{Value : State, ws : WebSocket, nv: any}> = ({Value,ws,nv}) => {
 
   const RequestFcm = async() => {
-    let a2 = await AsyncStorage.getItem("MyName")
-    let obj = {
+    try {
+      let a2 = await AsyncStorage.getItem("MyName")
+      let obj = {
       "Method" : "RequestMsg",
       "MyName" : a2,
       "OpponentName" : Value.name,
@@ -27,6 +28,10 @@ const UserList : React.FC<{Value : State, ws : WebSocket, nv: any}> = ({Value,ws
       OppName: Value.name,
       MyName : await AsyncStorage.getItem("MyName")
     });
+    } catch (error) {
+      
+    }
+    
   }
   return (
    <SafeAreaView  style = {styles.sectionDescription}>
@@ -52,6 +57,7 @@ const UserList : React.FC<{Value : State, ws : WebSocket, nv: any}> = ({Value,ws
    </SafeAreaView>
 );
 }
+
 const HomeSearch = ({navigation}) => {
   const { state, dispatch } = React.useContext(DataContext)
   const [msg,SetMsg] = useState(true);
@@ -80,13 +86,11 @@ const HomeSearch = ({navigation}) => {
     }
   }
   
- 
   const renderItem = ({ item }) => (
     
-    <UserList Value = {item} ws = {ws} nv = {navigation}/>
+    <UserList Value = {item} ws = {state.ws} nv = {navigation}/>
   );
-  const TC = (text : String) => {
-    
+  const TC = (text : React.SetStateAction<string>) => {
     setText(text);
     if(list != null)
     {
@@ -123,8 +127,6 @@ const HomeSearch = ({navigation}) => {
           });
           sendmsg(ws);
       };
-      
-    
     }
     else
     {
@@ -132,7 +134,7 @@ const HomeSearch = ({navigation}) => {
      ws = state.ws;
      sendmsg(ws);
     }
-     return ws;
+    return ws;
   }
   useEffect(() => {
     ws = addwebsocket()

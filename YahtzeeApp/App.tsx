@@ -16,7 +16,6 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import Home from './Components/Home';
 import RequestPage from './Components/Request';
 import Main from './Components/Main';
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
@@ -24,6 +23,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Names from './Components/Names';
 import StartingPage from './Components/Home1';
 import HomeSearch from './Components/Home2';
+import Connecting from './Components/Home';
 
 export interface State {
   Navigation : any,
@@ -97,7 +97,7 @@ function App() {
       <Stack.Navigator initialRouteName="Start">
         <Stack.Screen
           name="Home"
-          component={Home}
+          component={Connecting}
           options={{
             headerShown: false,
           }} />

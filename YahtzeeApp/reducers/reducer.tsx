@@ -10,9 +10,13 @@ type Action =
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
     case 'SetSocket':
-      return { ws : action.ws}
+      return { 
+        ...state,
+        ws : action.ws}
     case 'SetFirebasetoken':
-      return {firebasetoken : action.firebasetoken}
+      return {
+        ...state,
+        firebasetoken : action.firebasetoken}
     default:
       throw new Error()
   }

@@ -1,132 +1,164 @@
- import React ,{useState,useEffect}from 'react';
- import LottieView from 'lottie-react-native';
- import {DataContext} from '../reducers/datalayer'
- import AsyncStorage from '@react-native-async-storage/async-storage';
- import messaging from '@react-native-firebase/messaging';
- import { CommonActions } from '@react-navigation/native';
- import {SafeAreaView,
-   ScrollView,
-   StatusBar,
-   StyleSheet,
-   Text,
-   useColorScheme,
-   View,
-   TouchableOpacity
- } from 'react-native';
+/**
+ * Importing the modules for the UI to display, LocalStorage, Firebase Messaging, Navigation.
+ * AsyncStorage -- is the modulue that used to store data in the locally. The data stored in the app is
+    presisted as long as the app is removed.
+ * messaging -- This module catches the cloud messages when the app is closed on in the background State
  
- 
+*/
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+// React Hooks
+import React ,{useState,useEffect,useContext}from 'react';
+// Annimations Element
+import LottieView from 'lottie-react-native';
+//  Get the values in the Datalayer
+import {DataContext} from '../reducers/datalayer' 
+// Navigate the screen in the app with specific information and re-render of the screens.
+import { CommonActions } from '@react-navigation/native';
+// UI Elements
+import {SafeAreaView,StyleSheet,Text,View,TouchableOpacity} from 'react-native';
+/**
+ This Functional Component responsible is show the user to the starting page with simple annimation of
+ the lottieviews.
+ Here it loads the user name from the local storage. If there is no data of the user name It shows the
+ Create Account Button text. Else It shows to Start the Game.
+*/
 
 const StartingPage = ({navigation}) => {
+  // Get the values in the Datalayer to do operations.
+  const { state, dispatch } = useContext(DataContext)
+  // Boolean value to set if the UserName Present in local Storage.
+  const [isUserNamePresent,setisUserNamePresent] = useState(true)
+  
+/**
+ This Function navigates the user to Search_page
+*/
 
-  const { state, dispatch } = React.useContext(DataContext)
-  const [loading,SetLoading] = useState(true);
-  const [a,setA] = useState([""]);
-  
-const startGame = () => {
-  navigation.navigate("Search_page", {});     
-  
-  
+const Navigation_to_Search_Screen = () => {
+  navigation.navigate("Search_page", {});       
 }
-  
-  const createAcc = () => {
+
+/**
+ This Function is used to navigate user to the Request Screen with notification data.
+*/
+
+const Navigation_to_Request_Screen = (remoteMessage : FirebaseMessagingTypes.RemoteMessage) => {
+   navigation.navigate('Request_page',{
+      Key : remoteMessage
+    });
+}
+/**
+ This Function navigates the user to Create Account Screen
+*/
+  const Navigation_to_CreateAccount_Screen = () => {
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
         routes: [
-          { name: "Name" },
+          { name: "CreateAccount" },
         ],
       })
     );
   }
-  useEffect(() => {
+
+/**
+ This Function used to check the data in local storage. If there is a UserName Present in it. It
+  sets the isUserNamePresent to true.
+*/
+const getUserName = async() => {
+    let name = await AsyncStorage.getItem("MyName")
     
-    if(loading == true)
+    if(name != null)
     {
-      const a1 = async() => {
-        
-        
-        let a2 = await AsyncStorage.getItem("MyName")
-        if(a2 == null)
-        {
-
-          SetLoading(false);
-        }
-        else
-        {
-          const a = []
-          a.push(a2);
-          setA(a)
-          SetLoading(false);
-        }
-        return a2;
-      };
-      a1();
+      setisUserNamePresent(false);
     }
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message handled in the background!', remoteMessage);
+};
 
-    });
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      if(remoteMessage)
-      {
+/**
+ This Function used to handle the cloud notifications from firebase in background state and in quiet state.
+*/
+
+const Notification_handling = () => {
+  messaging().setBackgroundMessageHandler(async remoteMessage => {
+    console.log('Message handled in the background!', remoteMessage);
+  });
+  messaging().onNotificationOpenedApp(remoteMessage => {
+    if(remoteMessage)
+    {
+    console.log(
+      'Notification caused app to open from background state:',
+      remoteMessage.notification,
+    );
+   
+   }
+  });
+  messaging()
+  .getInitialNotification()
+  .then(remoteMessage => {
+    if (remoteMessage) {
       console.log(
-        'Notification caused app to open from background state:',
+        'Notification caused app to open from quit state:',
         remoteMessage.notification,
       );
-      navigation.navigate('Request_page',{
-        Key : remoteMessage
-      });
-     }
-    });
-    messaging()
-    .getInitialNotification()
-    .then(remoteMessage => {
-      if (remoteMessage) {
-        // console.log(
-        //   'Notification caused app to open from quit state:',
-        //   remoteMessage.notification,
-        // );
-        navigation.navigate('Request_page',{
-          Key: remoteMessage,
-        });
-      }
-    });
+      Navigation_to_Request_Screen(remoteMessage)
+      // navigation.navigate('Request_page',{
+      //   Key: remoteMessage,
+      // });
+    }
+  });
+}
+/**
+ This is useEffect fuction to render the data for the first time.
+*/
+
+useEffect(() => {
+    getUserName();
+    Notification_handling();
   }, []);
-   return (
+
+  /**
+ This is the condition that sets the button whether it is create Account or Start Game.
+*/
+
+  let button;
+  if (isUserNamePresent) {
+    button = <TouchableOpacity  style = {styles.sectionDescription} 
+              onPress={() => Navigation_to_CreateAccount_Screen()}>
+                <Text  style = {styles.sectionTitle}>
+                  Create Account
+                </Text>
+              </TouchableOpacity>;
+  }
+  else {
+    button = <TouchableOpacity  style = {styles.sectionDescription} 
+              onPress={ () => Navigation_to_Search_Screen()}>
+                <Text  style = {styles.sectionTitle}>
+                  Start Yahtzee
+                </Text>
+              </TouchableOpacity>;
+  }
+
+/**
+  Renders the UI elements in the Screen
+*/
+
+  return(
+
          <View style = {styles.main}>
-              <SafeAreaView style = {styles.sectionContainer}>
-                <LottieView
-                  source={require('../Assets/welcome.json')}
-                  style = {styles.highlight} autoPlay = {true} loop = {true}>
-                  </LottieView>
-              </SafeAreaView>
-                {
-                  a.map((rowData, index) => {
-                    if(rowData == "")
-                    {
-                    return(
-                        <TouchableOpacity key = {index} style = {styles.sectionDescription} onPress={()=>createAcc()}>
-                          <Text  style = {styles.sectionTitle}>
-                            Create Account
-                          </Text>
-                        </TouchableOpacity>
-                    )}
-                    else
-                    {
-                      return(
-                            <TouchableOpacity key = {index}  style = {styles.sectionDescription} onPress={()=>startGame()}>
-                              <Text  style = {styles.sectionTitle}>
-                                Start Yahtzee
-                              </Text>
-                            </TouchableOpacity>
-                      )
-                    }
-                  })
-                }
-      </View>
-   );
+            <SafeAreaView style = {styles.sectionContainer}>
+              <LottieView
+                source={require('../Assets/welcome.json')}
+                style = {styles.highlight} autoPlay = {true} loop = {true}>
+                </LottieView>
+            </SafeAreaView>
+            {button}
+          </View>
+  );
  };
  
+/**
+  Styles for the UI elements
+*/
  const styles = StyleSheet.create({
    sectionContainer: {
      alignContent : 'center', 
@@ -158,8 +190,7 @@ const startGame = () => {
    },
    highlight: {
      height : '100%',
-     width : '100%',
-    
+     width : '100%',   
    },
  });
  

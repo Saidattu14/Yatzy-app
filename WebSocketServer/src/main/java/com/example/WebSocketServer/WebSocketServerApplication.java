@@ -21,7 +21,7 @@ public class WebSocketServerApplication {
 
 		SpringApplication.run(WebSocketServerApplication.class, args);
 		try {
-			FileInputStream serviceAccount = new FileInputStream("key.json");
+			FileInputStream serviceAccount = new FileInputStream("key1.json");
 			FirebaseOptions options = FirebaseOptions.builder()
 					.setCredentials(GoogleCredentials.fromStream(serviceAccount))
 					.setProjectId("myadmin14")

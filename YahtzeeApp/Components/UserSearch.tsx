@@ -2,8 +2,8 @@ import React,{useEffect, useState} from 'react';
 import LottieView from 'lottie-react-native';
 import {Image,SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,View,TouchableOpacity,
   TextInput,FlatList,BackHandler} from 'react-native';
-  import {DataContext} from '../reducers/datalayer'
-import StartingPage from './Home1';
+import {DataContext} from '../reducers/datalayer'
+import StartingPage from './Starting_page';
 import { CommonActions } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 export interface State {

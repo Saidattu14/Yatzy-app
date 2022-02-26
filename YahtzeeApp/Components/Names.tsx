@@ -147,11 +147,10 @@ const Submiting_UserName = async() => {
 */
 
 const addwebsocket = () => {
-   
     if(state.ws == null)
     {
     try {
-    socket =  new WebSocket('ws://192.168.43.99:8080/', 'echo-protocol');
+    socket =  new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
     socket.onopen = () => {
        dispatch({
          type : 'SetSocket',
@@ -167,7 +166,11 @@ const addwebsocket = () => {
       console.log(error)
     }
    }
+   else
+   {
+     socket = state.ws;
    }
+  }
 
 /**
   This Function recieves the messages from the server.

@@ -12,7 +12,7 @@ const Request_page = ({navigation,route}) => {
   const {Key} = route.params
   const navigate = async() => {
     
-    navigation.navigate('Home',{
+    navigation.navigate('Connect',{
       OppName: Key.data.OpponentName,
       MyName : await AsyncStorage.getItem("MyName")
     })

@@ -100,10 +100,9 @@ const Notification_handling = () => {
         'Notification caused app to open from quit state:',
         remoteMessage.notification,
       );
-      Navigation_to_Request_Screen(remoteMessage)
-      // navigation.navigate('Request_page',{
-      //   Key: remoteMessage,
-      // });
+      navigation.navigate('Request_page',{
+        Key: remoteMessage,
+      });
     }
   });
 }

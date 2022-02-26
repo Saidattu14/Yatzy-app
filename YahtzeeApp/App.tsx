@@ -14,11 +14,11 @@ const Stack = createNativeStackNavigator();
 
 function App() {
   return (
-
+    
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Start">
         <Stack.Screen
-          name="Home"
+          name="Connect"
           component={Connecting}
           options={{
             headerShown: false,

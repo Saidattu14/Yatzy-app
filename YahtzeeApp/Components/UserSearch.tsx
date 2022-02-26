@@ -1,38 +1,94 @@
-import React,{useEffect, useState} from 'react';
-import LottieView from 'lottie-react-native';
+/**
+ * Importing the modules for the UI to display, LocalStorage, Firebase Messaging, Navigation.
+ * AsyncStorage -- is the modulue that used to store data in the locally. The data stored in the app is
+    presisted as long as the app is removed.
+ * messaging -- This module catches the cloud messages when the app is closed on in the background State
+
+*/
+import React,{useEffect, useState,useContext} from 'react';
 import {Image,SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,View,TouchableOpacity,
   TextInput,FlatList,BackHandler} from 'react-native';
 import {DataContext} from '../reducers/datalayer'
-import StartingPage from './Starting_page';
 import { CommonActions } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 export interface State {
   name: String;
   status: String;
   FCM : String,
 }
+export interface Name {
+  name : string,
+}
+// It is the message structure that recieved from the server.
+export interface message {
+  Method : string,
+  Data : Array<message_Data_details>,
+  Result : string,
+}
 
-const UserList : React.FC<{Value : State, ws : WebSocket, nv: any}> = ({Value,ws,nv}) => {
+// It is the message specific details
+export interface message_Data_details {
+  FCM: string, 
+  index: Number, 
+  name: string, 
+  status: string
+}
 
+const reducer1 = (state1 : any, action:any) => {
+  switch (action.type) {
+    case 'set_userslist':
+      return {
+        ...state1,
+        UsersDataOriginal : action.UsersDataOriginal,
+        UsersDataModify : action.UsersDataModify
+      };
+    case 'set_UserDataModify_text':
+        return {
+          ...state1,
+          text : action.text,
+          UsersDataModify : action.UsersDataModify
+    };
+    default:
+      throw new Error();
+  }
+}
+// The initial states of the text, AllUserData, Modify the list
+const defaultstate = {
+  text : "",
+  UsersDataOriginal : Array<message_Data_details>(),
+  UsersDataModify : Array<message_Data_details>(),
+}
+/**
+ This function component renders the list of the users that matches in the text inputed by the user.
+
+*/
+const UserList : React.FC<{Value : message_Data_details, socket : any, navigation_value: any}> = 
+    ({Value,socket,navigation_value}) => {
+  /**
+  This is function sends the opponet user an notification to play againt.
+  And also navigate the user to the connecting page.
+  */
   const RequestFcm = async() => {
     try {
-      let a2 = await AsyncStorage.getItem("MyName")
+      let my_name = await AsyncStorage.getItem("MyName")
       let obj = {
       "Method" : "RequestMsg",
-      "MyName" : a2,
+      "MyName" : my_name,
       "OpponentName" : Value.name,
       "OpponentFCM" : Value.FCM,
     }
-    ws.send(JSON.stringify(obj));
-    nv.navigate("Home", {
+    socket.send(JSON.stringify(obj));
+    navigation_value.navigate("Connect", {
       OppName: Value.name,
       MyName : await AsyncStorage.getItem("MyName")
     });
     } catch (error) {
-      
+      console.log(error)
     }
-    
   }
+
   return (
    <SafeAreaView  style = {styles.sectionDescription}>
     <View style = {styles.sectionList} >
@@ -57,24 +113,28 @@ const UserList : React.FC<{Value : State, ws : WebSocket, nv: any}> = ({Value,ws
    </SafeAreaView>
 );
 }
+/**
+ This function component allows user to search for the opponent user by searching with their names.
 
+*/
 const HomeSearch = ({navigation}) => {
-  const { state, dispatch } = React.useContext(DataContext)
+  const { state, dispatch } = useContext(DataContext)
   const [msg,SetMsg] = useState(true);
-  const [name,setName] = useState('');
-  const [text, setText] = useState('');
-  const [Data,setData] = useState([]);
-  const [list, setList] = useState([]);
-  var ws;
-  const sendmsg = async(ws:WebSocket) => {
-    
+  const [state1, dispatch1] = React.useReducer(reducer1,defaultstate);
+  var socket :any;
+
+
+/**
+ This function sends the messages to server to get the list of all the users except his/her data.
+*/
+  const sendmsg = async(ws:WebSocket) => {  
     if(msg == true)
     {
       try {
-        let a2 = await AsyncStorage.getItem("MyName")
+        let My_name = await AsyncStorage.getItem("MyName")
         let obj = {
           "Method" : "UserList",
-          "MyName" : a2
+          "MyName" : My_name
         }
         console.log(obj)
         ws.send(JSON.stringify(obj));
@@ -84,26 +144,44 @@ const HomeSearch = ({navigation}) => {
       }
      
     }
-  }
+}
   
-  const renderItem = ({ item }) => (
+  /**
+ This function component passes the userdata to render the list of all users. 
+
+*/
+  const renderItem = ({item}) => (
     
-    <UserList Value = {item} ws = {state.ws} nv = {navigation}/>
+    <UserList Value = {item} socket = {state.ws} navigation_value = {navigation}/>
   );
-  const TC = (text : React.SetStateAction<string>) => {
-    setText(text);
-    if(list != null)
+
+
+  /**
+ This function sets the modified list of users and text that user has entered in the search bar. 
+
+*/
+  const Text_Input_Change = (text  : string) => {
+    if(state1.UsersDataModify != null)
     {
-    const newData = Data.filter(function (item) {
+    const newData = state1.UsersDataOriginal.filter(function (item:Name) {
       const itemData = item.name
         ? item.name.toUpperCase()
         : ''.toUpperCase();
-      const textData = text.toUpperCase();
+      const textData = text.toString().toUpperCase();
       return itemData.indexOf(textData) > -1;
     });
-    setList(newData)
-    }
+    
+    dispatch1({
+      type: 'set_UserDataModify_text',
+      text : text,
+      UsersDataModify : [...newData],
+     })
   }
+  }
+  /**
+ This function handles the back function to navigate to the starting screen. 
+
+*/
   const backAction = () => {
     navigation.dispatch(
       CommonActions.reset({
@@ -115,68 +193,90 @@ const HomeSearch = ({navigation}) => {
     );
     return true;
   };
-  const addwebsocket = () => {
-    if(state.ws == null)
-    {
-      ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
-      ws.onopen = async() => {
-          console.log('connected')
-          dispatch({
-            type: 'SetSocket',
-            ws: ws,
-          });
-          sendmsg(ws);
-      };
-    }
-    else
-    {
-    
-     ws = state.ws;
-     sendmsg(ws);
-    }
-    return ws;
+  
+/**
+ This Function Creates a websocket connection with the server for communication. 
+*/
+
+const addwebsocket = () => {
+  if(state.ws == null)
+  {
+  try {
+  socket =  new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
+  socket.onopen = () => {
+     dispatch({
+       type : 'SetSocket',
+       ws   :  socket,
+    });
+    sendmsg(socket);
+   };
+  } 
+  catch (error) {
+    console.log(error)
   }
-  useEffect(() => {
-    ws = addwebsocket()
-    
-    try {
-      ws.onmessage = (e) => {
-        // a message was received
-        const a = JSON.parse(e.data);
-        setData(a.Data)
-        setList(a.Data)
+  }
+  else
+  {
+   socket = state.ws;
+   sendmsg(socket);
+  }
+ }
+
+ /**
+  This Function recieves the messages from the server.
+*/
+
+const recieve_messages_from_server = (socket : any) => {
+  try {
+      socket.onmessage = async(e:any) => {
+      let recieved_message : message;
+      recieved_message = JSON.parse(e.data);
+      //console.log(recieved_message)
+      if(recieved_message.Method == "UserList")
+      {
+        dispatch1({
+          type: 'set_userslist',
+          UsersDataOriginal : [...recieved_message.Data],
+          UsersDataModify : [...recieved_message.Data],
+         })
       }
-      ws.onerror = (e) => {
-        // an error occurred
-        console.log(e.message);
-      };
-      
-      ws.onclose = (e) => {
-        // connection closed
-        console.log(e.code, e.reason);
-      };
-    } catch (error) {
-      console.log("NotConnected")
-    }
+    };
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+ /**
+ This is useEffect fuction calls the repective functions for the first time when the screen loads.
+*/
+  useEffect(() => {
+    addwebsocket()
+    recieve_messages_from_server(socket);
     BackHandler.addEventListener("hardwareBackPress", backAction);
     return () => {
       BackHandler.removeEventListener("hardwareBackPress", backAction);
     }
   },[])
+  /**
+ Render UI elements. 
+
+*/
   return (
         <View style = {styles.main}>
           <SafeAreaView style = {styles.sectionDescription}>
-            <TextInput onChangeText={text => TC(text)} onSubmitEditing={()=> console.log("ok")} style = {styles.sectionTitle} placeholder="Search for Username" placeholderTextColor = 'green'/>
+            <TextInput onChangeText={text => Text_Input_Change(text)} onSubmitEditing={()=> console.log("ok")} style = {styles.sectionTitle} placeholder="Search for Username" placeholderTextColor = 'green'/>
           </SafeAreaView>
           <FlatList
-            data={list}
+            data={state1.UsersDataModify}
             renderItem={renderItem}
             keyExtractor={item => item.index}
           />
         </View>
   );
 };
-
+/**
+ Styles for the UI elements.
+*/
 const styles = StyleSheet.create({
   sectionContainer: {
     alignContent : 'center', 
@@ -287,8 +387,6 @@ const styles = StyleSheet.create({
     borderWidth : 1,
     borderRadius : 50,
     borderColor : 'green',
-    
-  
   },
 });
 export default HomeSearch;

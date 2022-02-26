@@ -3,8 +3,6 @@ import LottieView from 'lottie-react-native';
 import {Image,SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,View,TouchableOpacity,
   DrawerLayoutAndroid,TextInput
 } from 'react-native';
-
-
 import Scoreboard from './Scoreboard';
 import RequestPage from './Request';
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
@@ -14,15 +12,16 @@ const random = (min = 1, max = 6) => {
   let num = Math.random() * (max - min) + min;
   return Math.round(num);
 }
-const Search : React.FC<{websocket: WebSocket;vl: String,v2:String}> = ({websocket,vl,v2}) => {
+const Search : React.FC<{websocket: WebSocket;MyTurn: String,OppTurn:String}> = ({websocket,
+  MyTurn,OppTurn}) => {
     const [yes,setYes] = useState([0,0,0,0,0])
     const [yes1,setYes1] = useState([0,0,0,0,0])
     const [autoplay,setAutoplay] = useState([false,false,false,false,false])
     const [Oppautoplay,setOppautoplay] = useState([false,false,false,false,false])
     const [dices,setDices] = useState([5,10,15,20,30])
     const [Oppdices,setOppDices] = useState([5,10,15,20,30])
-    const [chances,setChances] = useState(vl)
-    const [oppchances, setOppChances] = useState(v2);
+    const [chances,setChances] = useState(MyTurn)
+    const [oppchances, setOppChances] = useState(OppTurn);
     const [oppscore,setOppscore] = useState({
       "OppScore":
       {
@@ -439,12 +438,12 @@ const Search : React.FC<{websocket: WebSocket;vl: String,v2:String}> = ({websock
 
 
 const Main = ({navigation,route}) => {
-  const {paramKey} = route.params;
-  const {paramKey1} = route.params;
+  const {MyTurn} = route.params;
+  const {OppTurn} = route.params;
   const { state, dispatch } = React.useContext(DataContext);
   return (
         <View style = {styles.main}>
-         <Search websocket={state.ws} vl = {paramKey} v2 = {paramKey1}></Search>
+         <Search websocket={state.ws} MyTurn = {MyTurn} OppTurn = {OppTurn}></Search>
         </View>
     );
 

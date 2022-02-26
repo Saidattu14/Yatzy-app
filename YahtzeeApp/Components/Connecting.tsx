@@ -1,24 +1,25 @@
 import React, {useState,useRef,useEffect,useContext} from 'react';
 import LottieView from 'lottie-react-native';
 import {Image,SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,View,TouchableOpacity,
-  DrawerLayoutAndroid,TextInput
+DrawerLayoutAndroid,TextInput
 } from 'react-native';
-import messaging from '@react-native-firebase/messaging';
-import {Colors,DebugInstructions,Header,LearnMoreLinks,ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
-import Scoreboard from './Scoreboard';
-import RequestPage from './Request';
-import { NavigationContainer, NavigationProp } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {DataContext} from '../reducers/datalayer'
 
-
-const Home = ({navigation,route}) => {
+// It is the message structure that recieved from the server.
+export interface message {
+  Method : string,
+  OppMethod : string,
+  Result : string,
+}
+/**
+ This function component sends the user data and his opponent data. And waits for the opponent to accept
+ the request to play againt. If the opponent accept It automatically navigates the user to the game page to start.
+*/
+const Connecting = ({navigation,route}) => {
   const {MyName,OppName} = route.params;
   const { state, dispatch } = React.useContext(DataContext)
-  const [loading, setLoading] = useState(true);
-  const [initialRoute, setInitialRoute] = useState('Home');
-  var ws;
-const sendmsg = (ws: WebSocket) => {
+  var socket:any;
+  const sendmsg = (ws: WebSocket) => {
   let obj = {
     "Method" : "Connect",
     "MyName" : MyName,
@@ -62,50 +63,60 @@ const sendmsg = (ws: WebSocket) => {
   
   ws.send(JSON.stringify(obj));
 }
+/**
+ This Function Creates a websocket connection with the server for communication. 
+*/
+
 const addwebsocket = () => {
-    if(state.ws == null)
-      {
-        ws = new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
-        ws.onopen = () => {
-        console.log('connected')
-        dispatch({
-          type: 'SetSocket',
-          ws: ws,
-          });
-        if(loading == true)
-        {
-         sendmsg(ws);
-         setLoading(false);
-        }
-      };    
-    }
+  if(state.ws == null)
+  {
+  try {
+  socket =  new WebSocket('ws://192.168.43.99:8085/user', 'echo-protocol');
+  socket.onopen = () => {
+     dispatch({
+       type : 'SetSocket',
+       ws   :  socket,
+    });
+    sendmsg(socket);
+   };
+  } 
+  catch (error) {
+    console.log(error)
+  }
+  }
   else
   {
-   ws = state.ws;
-   sendmsg(ws);
+   socket = state.ws;
+   sendmsg(socket);
   }
-  return ws;
+ }
+
+ /**
+  This Function recieves the messages from the server.
+*/
+
+const recieve_messages_from_server = (socket : any) => {
+  try {
+      socket.onmessage = async(e:any) => {
+      let recieved_message : message;
+      recieved_message = JSON.parse(e.data);
+      console.log(recieved_message)
+        navigation.navigate("Game_page", {
+         paramKey: recieved_message.Method,
+         paramKey1 : recieved_message.OppMethod
+       })
+    }
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 
-  
   useEffect(() => {
-    ws = addwebsocket();
-    ws.onmessage = (e) => {
-      const a = JSON.parse(e.data);
-      navigation.navigate("Game_page", {
-        paramKey: a.Method,
-        paramKey1 : a.OppMethod
-      })
-    }
-    ws.onerror = (e) => {
-        console.log(e.message);
-      };
-      
-    ws.onclose = (e) => {
-          console.log(e.code, e.reason);
-    };
+    addwebsocket();
+    recieve_messages_from_server(socket);
   }, []);
+
 
   return (
     <SafeAreaView style = {[styles.main,styles.ConnBck]} >
@@ -117,6 +128,7 @@ const addwebsocket = () => {
     </SafeAreaView>
     )
 };
+
 
 const styles = StyleSheet.create({
    main : {
@@ -133,9 +145,8 @@ const styles = StyleSheet.create({
     alignItems : 'center',
   },
   IconData: {
-    
     height : '100%',
     width : '40%',
   },
 });
-export default Home;
+export default Connecting;

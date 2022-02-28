@@ -4,296 +4,384 @@ import {Image,SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,V
   DrawerLayoutAndroid,TextInput
 } from 'react-native';
 import Scoreboard from './Scoreboard';
-import RequestPage from './Request';
-import { NavigationContainer, NavigationProp } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {DataContext} from '../reducers/datalayer'
+import { Opponent_Score, MyEstimatedScore_and_Colors, Original_Score } from './interfaces_json';
+
+
 const random = (min = 1, max = 6) => {
   let num = Math.random() * (max - min) + min;
   return Math.round(num);
 }
-const Search : React.FC<{websocket: WebSocket;MyTurn: String,OppTurn:String}> = ({websocket,
+
+
+
+const reducer1 = (state1 : any, action:any) => {
+  switch (action.type) {
+    case 'set_update_dices_and_chance_data':
+      return {
+        ...state1,
+        chances : action.chances,
+        dices : action.dices
+      };
+    case 'set_update_dices_and_chance_data_opp':
+        return {
+          ...state1,
+          oppchances : action.oppchances,
+          oppdices : action.oppdices
+      };
+      case 'set_update_estimatedscores_and_colors':
+        return {
+          ...state1,
+          score : action.score,
+      };
+    case 'set_update_myoriginalscore_mychance_oppchance':
+        return {
+          ...state1,  
+          chances : action.chances,
+          oppchances : action.oppchances,
+          Originalscore : action.Originalscore,
+      };
+    case 'set_update_opponentscore_mychance_oppchance':
+        return {
+          ...state1,  
+          chances : action.chances,
+          oppchances : action.oppchances,
+          oppscore : action.oppscore
+      };
+    default:
+      throw new Error();
+  }
+}
+
+
+// The initial states of the
+const defaultstate = {
+  chances : '',
+  oppchances : '',
+  dices : [5,10,15,20,30],
+  oppdices : [5,10,15,20,30],
+  score : MyEstimatedScore_and_Colors,
+  Originalscore : Original_Score,
+  oppscore : Opponent_Score,
+  // UsersDataOriginal : Array<message_Data_details>(),
+  // UsersDataModify : Array<message_Data_details>(),
+}
+
+
+
+
+
+/**
+ This is a game environment Component. Here the user roll dices, updates the scores on the scoreboard which
+ present in the side nav bar component.
+*/
+const GameBoard : React.FC<{websocket: any; MyTurn: string,OppTurn: string}> = ({websocket,
   MyTurn,OppTurn}) => {
-    const [yes,setYes] = useState([0,0,0,0,0])
-    const [yes1,setYes1] = useState([0,0,0,0,0])
+    defaultstate.chances = MyTurn;
+    defaultstate.oppchances = OppTurn
+    const [state1, dispatch1] = React.useReducer(reducer1,defaultstate);
+    const [UserDiceStatus,setUserDiceStatus] = useState([0,0,0,0,0])
+    const [OpponentDiceStatus, setOpponentDiceStatus] = useState([0,0,0,0,0])
     const [autoplay,setAutoplay] = useState([false,false,false,false,false])
     const [Oppautoplay,setOppautoplay] = useState([false,false,false,false,false])
-    const [dices,setDices] = useState([5,10,15,20,30])
-    const [Oppdices,setOppDices] = useState([5,10,15,20,30])
-    const [chances,setChances] = useState(MyTurn)
-    const [oppchances, setOppChances] = useState(OppTurn);
-    const [oppscore,setOppscore] = useState({
-      "OppScore":
-      {
-          "Chance": 0,
-          "Fives": 0,
-          "FourofKind": 0,
-          "Fours": 0, 
-          "FullHouse": 0, 
-          "LargeStraight": 0,
-          "Ones": 0, 
-          "Pair": 0, 
-          "Sixs": 0, 
-          "SmallStraight": 0, 
-          "ThreeofKind": 0, 
-          "Threes": 0, 
-          "TwoPair": 0,
-          "Twos": 0,
-          "Yatzy": 0
-      },
-    })
-    const [score,setScore] = useState({
-      "MyScore":
-          {
-              "Chance": 0,
-              "Fives": 0,
-              "FourofKind": 0,
-              "Fours": 0, 
-              "FullHouse": 0, 
-              "LargeStraight": 0,
-              "Ones": 0, 
-              "Pair": 0, 
-              "Sixs": 0, 
-              "SmallStraight": 0, 
-              "ThreeofKind": 0, 
-              "Threes": 0, 
-              "TwoPair": 0,
-              "Twos": 0,
-              "Yatzy": 0
-          },
-      "Colors" : {
-          "Chance": 'yellow',
-          "Fives":  "yellow",
-          "FourofKind":  "yellow",
-          "Fours":  "yellow", 
-          "FullHouse":  "yellow", 
-          "LargeStraight":  "yellow",
-          "Ones":  "yellow", 
-          "Pair":  "yellow", 
-          "Sixs":  "yellow", 
-          "SmallStraight":  "yellow", 
-          "ThreeofKind":  "yellow", 
-          "Threes":  "yellow", 
-          "TwoPair":  "yellow",
-          "Twos":  "yellow",
-          "Yatzy":  "yellow"
-      },
-      "Turn" : chances
-    });
-    const [Originalscore,setOrginalscore] =  useState({
-      "MyScore":
-          {
-              "Chance": 0,
-              "Fives": 0,
-              "FourofKind": 0,
-              "Fours": 0, 
-              "FullHouse": 0, 
-              "LargeStraight": 0,
-              "Ones": 0, 
-              "Pair": 0, 
-              "Sixs": 0, 
-              "SmallStraight": 0, 
-              "ThreeofKind": 0, 
-              "Threes": 0, 
-              "TwoPair": 0,
-              "Twos": 0,
-              "Yatzy": 0
-          }
-      });
     const [Ok,SetOk] = useState(true);
     const drawer = useRef(null);
-    function a1<Type>(a2: number[],index : number): void {
-      if(a2[index] == 0)
+
+    /**
+     Saving the user dices and updated that one in UI.
+    */
+    function Save_and_Release<Type>(DiceStatus: number[],index : number): void {
+      if(DiceStatus[index] == 0)
       {
-        a2[index] = 1
+        DiceStatus[index] = 1
       }
       else
       {
-        a2[index] = 0
+        DiceStatus[index] = 0
       }
-      let arr: React.SetStateAction<number[]> = [...a2]
-      setYes(arr)
+      let arr: React.SetStateAction<number[]> = [...DiceStatus]
+      setUserDiceStatus(arr)
     }
+   
+    /**
+     Updates the User Chance and Dices infromation on UI when user cliks on the roll dice button.
+    */
+    function Update_ChanceData_and_Dices (updated_dices: number[],updated_chances : string): void {
+      
+        dispatch1({
+          type: 'set_update_dices_and_chance_data',
+          chances : updated_chances,
+          dices : updated_dices,
+         }) 
+    }
+
+   /**
+     Updates the User Chance data, opponent chance data and opponent Dices infromation on UI 
+     when opponent cliks on the their roll dice button.
+    */
+   function Update_ChanceData_and_Dices_Opponent (updated_dices: number[],updated_chances : string): void {
+      dispatch1({
+        type: 'set_update_dices_and_chance_data_opp',
+        oppchances : updated_chances,
+        oppdices : updated_dices,
+       })
+    }
+   
+    /**
+     Updates the User Chance data, opponent chance data and original scores infromation on UI.
+    */
+
+    function Update_myoriginalscore_mychance_oppchance (updated_chances : string,
+      updated_oppchances:string,Original_Score: any): void {
+      dispatch1({
+        type: 'set_update_myoriginalscore_mychance_oppchance',
+        oppchances : updated_oppchances,
+        chances : updated_chances,
+        Originalscore : Original_Score,
+       })
+    }
+    /**
+     Updates the User estimated scores infromation on UI for the dices data.
+    */
+
+    function Update_estimated_score_and_colors (score : JSON,colors:JSON): void {
+      let obj = {
+        "MyScore" : score,
+        "Colors" : colors
+      }
+      dispatch1({
+        type: 'set_update_estimatedscores_and_colors',
+        score : obj
+       })
+    }
+   
+    /**
+     Updates the User Chance data, opponent chance data and opponent scores infromation on UI.
+    */
+    function Update_opponent_score_mychance_oppchance (updated_chances : string,
+      updated_oppchances:string,score: JSON): void {
+      let obj = {
+        "OppScore" :score
+      }
+      dispatch1({
+        type: 'set_update_opponentscore_mychance_oppchance',
+        oppchances : updated_oppchances,
+        chances : updated_chances,
+        oppscore : obj,
+       })
+    }
+   
+    /**
+     Here the dices present on the UI are rolled and stores the new dices infromation.
+     The Infromation was send to the server.
+    */
     function DiceRoll (): void {
       var list = []
-      if(chances != 'Opponent Turn' && chances != "Over")
+      if(state1.chances != 'Opponent Turn' && state1.chances != "Over")
       {
       
       for(let i = 0; i<=4;i++)
       {
-        if (yes[i] != 1)
+        if (UserDiceStatus[i] != 1)
         {
         let res = random(1,6);
         list.push(res);
-
         if(res == 1)
         {
-         dices[i] = 5;
+         state1.dices[i] = 5;
         }
         else if(res == 2)
         {
-          dices[i] = 10;
+          state1.dices[i] = 10;
         }
         else if(res == 3)
         {
-          dices[i] = 15;
+          state1.dices[i] = 15;
         }
         else if(res == 4)
         {
-          dices[i] = 20;
+          state1.dices[i] = 20;
         }
         else if(res == 5)
         {
-          dices[i] = 25;
+          state1.dices[i] = 25;
         }
         else if(res == 6)
         {
-          dices[i] = 30;
+          state1.dices[i] = 30;
         }
         }
         else
         {
-          if(dices[i] == 5)
+          if(state1.dices[i] == 5)
           {
             list.push(1);
           }
-          else if(dices[i] == 10)
+          else if(state1.dices[i] == 10)
           {
             list.push(2);
           }
-          else if(dices[i] == 15)
+          else if(state1.dices[i] == 15)
           {
             list.push(3);
           }
-          else if(dices[i] == 20)
+          else if(state1.dices[i] == 20)
           {
             list.push(4);
           }
-          else if(dices[i] == 25)
+          else if(state1.dices[i] == 25)
           {
             list.push(5);
           }
-          else if(dices[i] == 30)
+          else if(state1.dices[i] == 30)
           {
             list.push(6);
           }
         }
       }
-      let arr: React.SetStateAction<number[]> = [...dices]
-      setDices(arr);
-      if (chances == 'Roll Dice')
+      if (state1.chances == 'Roll Dice')
       {
-        setChances('Second Chance')
+        Update_ChanceData_and_Dices(state1.dices,'Second Chance');
       }
-      else if (chances == 'Second Chance')
+      else if (state1.chances == 'Second Chance')
       {
-        setChances('Final Chance')
+        Update_ChanceData_and_Dices(state1.dices,'Final Chance');
+        
       }
-      else if (chances == 'Final Chance')
+      else if (state1.chances == 'Final Chance')
       {
-        setChances('Over')
+        Update_ChanceData_and_Dices(state1.dices,'Over');
+
       }
       let obj = {
         "Method" : "Dicerolling",
-        "chance" : chances,
+        "chance" : state1.chances,
         "Dices" : list
       }
       websocket.send(JSON.stringify(obj));
     }}
-    function DiceRollOpp (Dicelist: number[],): void {
-      var list = []
-     if(oppchances != 'Opponent Turn' )
+
+
+  /**
+     
+    Here opponet dices infromation was recieved from the server and updated that one on the UI.
+  */
+  function DiceRollOpp (Dicelist: number[]): void {
+      
+     if(state1.oppchances != 'Opponent Turn' )
      {
       for(let i = 0; i<=4;i++)
       {
         let res = Dicelist[i];
         if(res == 1)
         {
-         Oppdices[i] = 5;
+         state1.oppdices[i] = 5;
         }
         else if(res == 2)
         {
-          Oppdices[i] = 10;
+          state1.oppdices[i] = 10;
         }
         else if(res == 3)
         {
-          Oppdices[i] = 15;
+          state1.oppdices[i] = 15;
         }
         else if(res == 4)
         {
-          Oppdices[i] = 20;
+          state1.oppdices[i] = 20;
         }
         else if(res == 5)
         {
-          Oppdices[i] = 25;
+          state1.oppdices[i] = 25;
         }
         else if(res == 6)
         {
-          Oppdices[i] = 30;
+          state1.oppdices[i] = 30;
         }
      }
-     let arr: React.SetStateAction<number[]> = [...Oppdices]
-     setOppDices(arr);
-     if (oppchances == 'Roll Dice')
+     if (state1.oppchances == 'Roll Dice')
      {
-       setOppChances('Second Chance')
-     }
-     else if (oppchances == 'Second Chance')
-     {
-       setOppChances('Final Chance')
-     }
-     else if (oppchances == 'Final Chance')
-     {
-       setOppChances('Opponent Turn')
-     }
-   }}
-
-  websocket.onmessage = (e) => {
-      // a message was received
-      const a = JSON.parse(e.data);
-      if(a.Method == "Estimated_MyScore")
-      {
-      
-       setScore(a);
-      }
-      else if (a.Method == "Update_MyScore")
-      {
-        setChances('Opponent Turn');
-        setOppChances('Roll Dice');
-        setOrginalscore(a);
-      }
-      else if(a.Method == "OpponentDices")
-      {
+      Update_ChanceData_and_Dices_Opponent(state1.oppdices,'Second Chance');
        
-       DiceRollOpp(a.Dices);
-      }
-      else if(a.Method == "Update_OppScore")
-      {
-        let obj = {
-          "OppScore": a.Score
-        }
-        drawer.current.openDrawer();
-        setChances('Roll Dice');
-        setOppChances('Opponent Turn');
-        setOppscore(obj);
-        
-      }
-     
-    };
-    const openNav = () => {
+     }
+     else if (state1.oppchances == 'Second Chance')
+     {
+      Update_ChanceData_and_Dices_Opponent(state1.oppdices,'Final Chance');
+      
+     }
+     else if (state1.oppchances == 'Final Chance')
+     {
+      Update_ChanceData_and_Dices_Opponent(state1.oppdices,'Opponent Turn');
+     }
+  }}
 
-    } 
-    const SideNav = () => {
+
+
+ /**
+   This is a Side Navigation drawer where the user scoreboard and opponent score present.
+  */
+  const SideNav = () => {
       return(
-        <Scoreboard score={score.MyScore}
-        oppscore = {oppscore.OppScore}
-        originalscores={Originalscore.MyScore} 
-        colors = {score.Colors}
+        <Scoreboard score={state1.score.MyScore}
+        oppscore = {state1.oppscore.OppScore}
+        originalscores = {state1.Originalscore.MyScore} 
+        colors = {state1.score.Colors}
         websocket = {websocket}
-        Turn = {chances}
-        Ok = {Ok}></Scoreboard>
+        Turn = {state1.chances}
+        Ok = {Ok}> </Scoreboard>
       )
     }
+
+  /**
+  This Function recieves the messages from the server.
+*/
+
+const recieve_messages_from_server = (socket : any, drawer: any) => {
+  try {
+      websocket.onmessage = async(e:any) => {
+      // a message was received
+      let recieved_message : any;
+      recieved_message = JSON.parse(e.data);
+      //console.log(recieved_message)
+      if(recieved_message.Method == "Estimated_MyScore")
+      {
+        Update_estimated_score_and_colors(recieved_message.MyScore,recieved_message.Colors)
+      }
+      else if (recieved_message.Method == "Update_MyScore")
+      {
+        let obj = {
+          "MyScore" : recieved_message.MyScore,
+           "Colors" : recieved_message.Colors
+        }
+        Update_myoriginalscore_mychance_oppchance('Opponent Turn','Roll Dice',obj)
+      }
+      else if(recieved_message.Method == "OpponentDices")
+      {
+        DiceRollOpp(recieved_message.Dices);
+      }
+      else if(recieved_message.Method == "Update_OppScore")
+      {
+        //console.log(recieved_message)
+        Update_opponent_score_mychance_oppchance('Roll Dice','Opponent Turn',recieved_message.Score)
+        
+      }
+    };
+  } catch (error) {
+    console.log(error)
+  }
+}
+   /**
+    This is useEffect fuction calls the repective function for the first time when the screen loads.
+  */
+
+  useEffect(() => {
+    recieve_messages_from_server(websocket,drawer);
+    // BackHandler.addEventListener("hardwareBackPress", backAction);
+    // return () => {
+    // BackHandler.removeEventListener("hardwareBackPress", backAction);
+    //}
+  }, []);
+
+
     return (
       <DrawerLayoutAndroid
         ref={drawer}
@@ -315,14 +403,16 @@ const Search : React.FC<{websocket: WebSocket;MyTurn: String,OppTurn:String}> = 
                 User
               </Text>
           </View>
-          
+
+
           <View style = {styles.sectionContainer}>
                 {
-                  yes.map((rowData, index) => {
+                  UserDiceStatus.map((rowData, index) => {
                     if (rowData == 1)
                     {
                     return (
-                      <Text onPress={() => a1(yes,index)} style = {styles.sectionButtonSpace} key = {index}>
+                      <Text onPress={() => Save_and_Release(UserDiceStatus,index)} 
+                      style = {styles.sectionButtonSpace} key = {index}>
                       <SafeAreaView  key = {index} style = {styles.sectionProfile} >
                       <LottieView 
                         source={require('../Assets/pause1.json')}
@@ -334,13 +424,15 @@ const Search : React.FC<{websocket: WebSocket;MyTurn: String,OppTurn:String}> = 
                     )}
                     else
                     {
+                      
                       return (
-                        <Text onPress={() => a1(yes,index)} key = {index}  style = {styles.sectionButtonSpace} >
+                        <Text onPress={() => Save_and_Release(UserDiceStatus,index)} 
+                        key = {index}  style = {styles.sectionButtonSpace} >
                         <SafeAreaView  key = {index} style = {styles.sectionProfile} >
                         <LottieView
                           key = {index}
                           source={require('../Assets/dice.json')}
-                          ref={animation => animation?.play(dices[index],dices[index])}
+                          ref={animation => animation?.play(state1.dices[index],state1.dices[index])}
                           style = {styles.ImageData} autoPlay = {autoplay[index]} loop = {autoplay[index]}>
                         </LottieView>
                         </SafeAreaView>
@@ -360,7 +452,7 @@ const Search : React.FC<{websocket: WebSocket;MyTurn: String,OppTurn:String}> = 
             <View style = {styles.sectionButtonMain}>
               <TouchableOpacity style = {styles.sectionButoon} onPress={() => DiceRoll()}>
                   <Text  style = {styles.sectionButtonData}>
-                   {chances}
+                   {state1.chances}
                   </Text>
               </TouchableOpacity>
             </View>
@@ -382,15 +474,14 @@ const Search : React.FC<{websocket: WebSocket;MyTurn: String,OppTurn:String}> = 
           </View>  
         <View style = {styles.sectionContainer}>
                 {
-                  yes1.map((rowData, index) => {
+                  OpponentDiceStatus.map((rowData, index) => {
                     if (rowData == 1)
                     {
                     return (
-                      <Text onPress={() => a1(yes,index)} style = {styles.sectionButtonSpace} key = {index}>
+                      <Text  style = {styles.sectionButtonSpace} key = {index}>
                       <SafeAreaView  key = {index} style = {styles.sectionProfile} >
                       <LottieView 
-                        source={require('../Assets/pause1.json')}
-                       
+                        source={require('../Assets/pause1.json')}                   
                         style = {styles.ImageData} autoPlay = {false} loop = {false}>
                       </LottieView>
                       </SafeAreaView>
@@ -405,7 +496,7 @@ const Search : React.FC<{websocket: WebSocket;MyTurn: String,OppTurn:String}> = 
                         <LottieView
                           key = {index}
                           source={require('../Assets/dice.json')}
-                          ref={animation => animation?.play(Oppdices[index],Oppdices[index])}
+                          ref={animation => animation?.play(state1.oppdices[index],state1.oppdices[index])}
                           style = {styles.ImageData} autoPlay = {Oppautoplay[index]} loop = {Oppautoplay[index]}>
                         </LottieView>
                         </SafeAreaView>
@@ -425,7 +516,7 @@ const Search : React.FC<{websocket: WebSocket;MyTurn: String,OppTurn:String}> = 
             <View style = {styles.sectionButtonMain}>
               <TouchableOpacity style = {styles.sectionButoon} >
                   <Text  style = {styles.sectionButtonData}>
-                   {oppchances}
+                   {state1.oppchances}
                   </Text>
               </TouchableOpacity>
             </View>
@@ -443,7 +534,7 @@ const Main = ({navigation,route}) => {
   const { state, dispatch } = React.useContext(DataContext);
   return (
         <View style = {styles.main}>
-         <Search websocket={state.ws} MyTurn = {MyTurn} OppTurn = {OppTurn}></Search>
+         <GameBoard websocket = {state.ws} MyTurn = {MyTurn} OppTurn = {OppTurn}></GameBoard>
         </View>
     );
 

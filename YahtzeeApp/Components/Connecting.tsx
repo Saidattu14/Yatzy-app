@@ -6,7 +6,7 @@ DrawerLayoutAndroid,TextInput
 import {DataContext} from '../reducers/datalayer'
 
 // It is the message structure that recieved from the server.
-export interface message {
+export interface Connect_message {
   Method : string,
   OppMethod : string,
   Result : string,
@@ -98,12 +98,12 @@ const addwebsocket = () => {
 const recieve_messages_from_server = (socket : any) => {
   try {
       socket.onmessage = async(e:any) => {
-      let recieved_message : message;
+      let recieved_message : Connect_message;
       recieved_message = JSON.parse(e.data);
       console.log(recieved_message)
         navigation.navigate("Game_page", {
-         paramKey: recieved_message.Method,
-         paramKey1 : recieved_message.OppMethod
+         MyTurn : recieved_message.Method,
+         OppTurn : recieved_message.OppMethod
        })
     }
   } catch (error) {

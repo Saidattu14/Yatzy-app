@@ -89,6 +89,9 @@ const Notification_handling = () => {
       'Notification caused app to open from background state:',
       remoteMessage.notification,
     );
+    navigation.navigate('Request_page',{
+      Key: remoteMessage,
+    });
    
    }
   });

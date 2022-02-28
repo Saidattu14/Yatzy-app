@@ -117,7 +117,7 @@ const Scoreboard :React.FC<{score: State,
 
   }
   const update = (data : String,Value : Number) => {
-    if(Turn != 'Opponent Turn')
+    if(Turn != 'Opponent Turn' && Turn != 'Roll Dice')
     {
     if(count == true || count == false)
     {

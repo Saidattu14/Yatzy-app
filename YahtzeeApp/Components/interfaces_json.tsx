@@ -84,3 +84,41 @@ export const MyEstimatedScore_and_Colors = {
             "Bonous" : 0,
         }
   }
+
+  export interface Score_Data {
+    Ones: Number;
+    Twos: Number;
+    Threes:Number;
+    Fours:Number;
+    Fives:Number;
+    Sixs:Number;
+    Sum : Number;
+    Bonous : Number,
+    Pair:Number;
+    TwoPair:Number;
+    ThreeofKind:Number;
+    FourofKind:Number;
+    FullHouse:Number;
+    SmallStraight:Number;
+    LargeStraight:Number;
+    Chance:Number;
+    Yatzy :Number;
+    Total : Number;
+  }
+  export interface Colors{
+    Ones: string;
+    Twos: string;
+    Threes: string;
+    Fours: string;
+    Fives: string;
+    Sixs: string;
+    Pair: string;
+    TwoPair: string;
+    ThreeofKind: string;
+    FourofKind: string;
+    FullHouse: string;
+    SmallStraight: string;
+    LargeStraight: string;
+    Chance: string;
+    Yatzy : string;
+  }

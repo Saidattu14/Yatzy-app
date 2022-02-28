@@ -528,7 +528,8 @@ const recieve_messages_from_server = (socket : any, drawer: any) => {
 };
 
 
-const Main = ({navigation,route}) => {
+const Main = (props:any) => {
+  const {navigation,route} = props;
   const {MyTurn} = route.params;
   const {OppTurn} = route.params;
   const { state, dispatch } = React.useContext(DataContext);

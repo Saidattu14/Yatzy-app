@@ -1,4 +1,4 @@
-import React, {useEffect,useContext,useReducer,} from 'react';
+import React, {useEffect,useContext,useReducer} from 'react';
 import reducer,{initialState} from './reducer';
 
 
@@ -6,10 +6,10 @@ export function createCtx<StateType, ActionType>(
     reducer: React.Reducer<StateType, ActionType>,
     initialState: StateType,
   ) {
-    const defaultDispatch: React.Dispatch<ActionType> = () => initialState // we never actually use this
+    const defaultDispatch: React.Dispatch<ActionType> = () => initialState
     const ctx = React.createContext({
       state: initialState,
-      dispatch: defaultDispatch, // just to mock out the dispatch type and make it not optioanl
+      dispatch: defaultDispatch,
     })
     function Provider(props: React.PropsWithChildren<{}>) {
       const [state, dispatch] = React.useReducer<React.Reducer<StateType, ActionType>>(reducer, initialState)

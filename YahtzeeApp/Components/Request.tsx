@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity } from "react-native";
-export interface State {
-  name: String;
-  status: String;
-  FCM : String,
-}
 
 
-const Request_page = ({navigation,route}) => {
-  const {Key} = route.params
+/**
+ This function component has the information of the notification request data.
+*/
+const Request_page = (props:any) => {
+  const {navigation,route} = props;
+  const {Key} = route.params;  
+  /**
+    This function navigates the user to connect screen if the user accept the request.
+  */
   const navigate = async() => {
-    
     navigation.navigate('Connect',{
       OppName: Key.data.OpponentName,
       MyName : await AsyncStorage.getItem("MyName")
@@ -33,8 +34,7 @@ const Request_page = ({navigation,route}) => {
             <Text style={styles.textStyle}>Yes</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.button, styles.buttonClose]}
-              
+              style={[styles.button, styles.buttonClose]}              
             >
             <Text style={styles.textStyle}>No</Text>
             </TouchableOpacity>
@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22,
-
   },
   modalView: {
     margin: 20,

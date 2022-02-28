@@ -1,58 +1,29 @@
 import React, {useState,useRef, useEffect} from 'react';
-import LottieView from 'lottie-react-native';
 import {Image,SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,View,TouchableOpacity,
   DrawerLayoutAndroid,TextInput
 } from 'react-native';
-import {Colors,DebugInstructions,Header,LearnMoreLinks,ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 import styled from 'styled-components/native';
+import { Score_Data, Colors } from './interfaces_json';
 
-export interface State {
-  Ones: Number;
-  Twos: Number;
-  Threes:Number;
-  Fours:Number;
-  Fives:Number;
-  Sixs:Number;
-  Sum : Number;
-  Bonous : Number,
-  Pair:Number;
-  TwoPair:Number;
-  ThreeofKind:Number;
-  FourofKind:Number;
-  FullHouse:Number;
-  SmallStraight:Number;
-  LargeStraight:Number;
-  Chance:Number;
-  Yatzy :Number;
-  Total : Number;
-}
-export interface Colors{
-  Ones: any;
-  Twos: any;
-  Threes: any;
-  Fours: any;
-  Fives: any;
-  Sixs: any;
-  Pair: any;
-  TwoPair: any;
-  ThreeofKind: any;
-  FourofKind: any;
-  FullHouse: any;
-  SmallStraight: any;
-  LargeStraight: any;
-  Chance: any;
-  Yatzy : any;
-}
-const Scoreboard :React.FC<{score: State,
-  originalscores : State;
+/**
+ This Function component handles the ScoreBoard infromatation of both the user and the opponent.
+ Here User get th Estimated scores after the dice was rolled the user can select the respective score to
+ update in the original score.
+*/
+const Scoreboard :React.FC<{score: Score_Data,
+  originalscores : Score_Data;
   colors: Colors;
   websocket : WebSocket;
-  Turn : String,
+  Turn : string,
   Ok : boolean,
-  oppscore : State
-}>= ({score,originalscores,colors,websocket,Turn,Ok,oppscore}) => {
+  oppscore : Score_Data
+}>= ({score,originalscores,colors,websocket,Turn,Ok,oppscore}) => 
+{
   const [count,setCount] = useState(Ok);
-  const updatecolors = (data : String) => 
+  /**
+    This Function updates the color of the selected score of the scoreboard.
+  */
+  const updatecolors = (data : string) => 
   {
     if(data == "Ones" && colors.Ones == "yellow")
     {
@@ -114,88 +85,91 @@ const Scoreboard :React.FC<{score: State,
     {
       colors.FullHouse = 'red'
     }
-
   }
-  const update = (data : String,Value : Number) => {
+  
+  /**
+    This Function updates the selected score and color on the UI. And sends the updated scoreboard to the server.
+  */
+  const update = (data : string,Value : Number) => {
     if(Turn != 'Opponent Turn' && Turn != 'Roll Dice')
     {
     if(count == true || count == false)
     {
-      
+      let temp;
        if(data != "Ones")
        {
-         var temp = originalscores.Ones
+         temp = originalscores.Ones
          score.Ones = temp
        }
        if(data != "Twos")
        {
-          var temp = originalscores.Twos
+          temp = originalscores.Twos
           score.Twos = temp
        }
        if(data != "Threes")
        {
-        var temp = originalscores.Threes;
+        temp = originalscores.Threes;
         score.Threes = temp;
        }
        if(data != "Fours")
        {
-        var temp = originalscores.Fours;
+        temp = originalscores.Fours;
         score.Fours = temp;
        }
        if(data != "Fives")
        {
-        var temp = originalscores.Fives;
+        temp = originalscores.Fives;
         score.Fives = temp;
        }
        if(data != "Sixs")
        {
-        var temp =  originalscores.Sixs;
+        temp =  originalscores.Sixs;
         score.Sixs = temp;
        }
       if(data != "Pair")
       {
-        var temp = originalscores.Pair;
+        temp = originalscores.Pair;
         score.Pair = temp;
       }
       if(data != "TwoPair")
       {
-        var temp = originalscores.TwoPair;
+        temp = originalscores.TwoPair;
         score.TwoPair = temp;
       }
       if(data != "ThreeofKind")
       {
-        var temp = originalscores.ThreeofKind;
+        temp = originalscores.ThreeofKind;
         score.ThreeofKind = temp;
       }
       if(data != "FourofKind")
       {
-        var temp = originalscores.FourofKind;
+        temp = originalscores.FourofKind;
         score.FourofKind = temp;
       }
       if(data != "SmallStraight")
       {
-        var temp = originalscores.SmallStraight;
+        temp = originalscores.SmallStraight;
         score.SmallStraight = temp;
       }
       if(data != "LargeStraight")
       {
-        var temp =  originalscores.LargeStraight;
+        temp =  originalscores.LargeStraight;
         score.LargeStraight = temp;
       }
       if(data != "Chance")
       {
-        var temp = originalscores.Chance;
+        temp = originalscores.Chance;
         score.Chance = temp;
       }
       if(data != "FullHouse")
       {
-        var temp = originalscores.FullHouse;
+        temp = originalscores.FullHouse;
         score.FullHouse = temp;
       }
       if(data != "Yatzy")
       {
-        console.log("hello")
-        var temp = originalscores.Yatzy;
+        
+        temp = originalscores.Yatzy;
         score.Yatzy = temp;
       }
       updatecolors(data);
@@ -214,7 +188,7 @@ const Scoreboard :React.FC<{score: State,
       }
     }
   }
-  }
+}
   const TextData = styled.Text`
   border-radius: 3px;
   border: 1.2px green;
@@ -222,10 +196,7 @@ const Scoreboard :React.FC<{score: State,
   text-align: center;
   padding : 4px;
 `
-const theme = () => {
-  main: "white"
-};
-  
+
   return (
     <View style={[styles.container, styles.navigationContainer]}>
      <View style = {styles.highlight}>

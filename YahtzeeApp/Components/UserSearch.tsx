@@ -117,7 +117,8 @@ const UserList : React.FC<{Value : message_Data_details, socket : any, navigatio
  This function component allows user to search for the opponent user by searching with their names.
 
 */
-const HomeSearch = ({navigation}) => {
+const HomeSearch = (props:any) => {
+  const {navigation,route} = props;
   const { state, dispatch } = useContext(DataContext)
   const [msg,SetMsg] = useState(true);
   const [state1, dispatch1] = React.useReducer(reducer1,defaultstate);
@@ -150,9 +151,8 @@ const HomeSearch = ({navigation}) => {
  This function component passes the userdata to render the list of all users. 
 
 */
-  const renderItem = ({item}) => (
-    
-    <UserList Value = {item} socket = {state.ws} navigation_value = {navigation}/>
+  const renderItem = (props:any) => (
+    <UserList Value = {props.item} socket = {state.ws} navigation_value = {navigation}/>
   );
 
 

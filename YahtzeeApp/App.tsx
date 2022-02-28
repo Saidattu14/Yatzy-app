@@ -5,13 +5,15 @@ import Main from './Components/Main';
 import StartingPage from './Components/Starting_page';
 import HomeSearch from './Components/UserSearch';
 import Connecting from './Components/Connecting';
-import CreateAccount from './Components/Names';
-import { NavigationContainer, NavigationProp } from '@react-navigation/native';
+import CreateAccount from './Components/CreateUserName';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
 const Stack = createNativeStackNavigator();
-
+/**
+ This Function component sets navigation data of all the screens. 
+*/
 function App() {
   return (
     

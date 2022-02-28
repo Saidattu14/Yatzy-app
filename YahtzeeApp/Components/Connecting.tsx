@@ -15,7 +15,8 @@ export interface Connect_message {
  This function component sends the user data and his opponent data. And waits for the opponent to accept
  the request to play againt. If the opponent accept It automatically navigates the user to the game page to start.
 */
-const Connecting = ({navigation,route}) => {
+const Connecting = (props:any) => {
+  const {navigation,route} = props;
   const {MyName,OppName} = route.params;
   const { state, dispatch } = React.useContext(DataContext)
   var socket:any;

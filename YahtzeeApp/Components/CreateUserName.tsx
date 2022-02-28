@@ -66,7 +66,9 @@ const defaultstate = {
  If there is no match it allows to submit to the server and server again gets back the result.
  Success of the result navigates to the User Search Screen.
 */
-const CreateAccount = ({navigation}) => {
+const CreateAccount = (props:any) => {
+  const {navigation,route} = props;
+  console.log(props)
    // Stores the websocket data
   var socket : any;
    // Get the values in the Datalayer to do operations.

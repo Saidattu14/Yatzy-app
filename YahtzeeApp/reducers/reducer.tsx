@@ -4,8 +4,8 @@ export const initialState = { ws: null, firebasetoken : null }
 
 type AppState = typeof initialState
 type Action =
-  | { type: 'SetSocket',ws : WebSocket }
-  | { type: 'SetFirebasetoken', firebasetoken : String }
+  | { type: 'SetSocket',ws : null }
+  | { type: 'SetFirebasetoken', firebasetoken : null }
 
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {

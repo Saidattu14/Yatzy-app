@@ -24,7 +24,8 @@ import {SafeAreaView,StyleSheet,Text,View,TouchableOpacity} from 'react-native';
  Create Account Button text. Else It shows to Start the Game.
 */
 
-const StartingPage = ({navigation}) => {
+const StartingPage = (props:any) => {
+  const {navigation,route} = props;
   // Get the values in the Datalayer to do operations.
   const { state, dispatch } = useContext(DataContext)
   // Boolean value to set if the UserName Present in local Storage.

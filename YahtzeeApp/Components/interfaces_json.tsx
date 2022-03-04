@@ -1,4 +1,4 @@
-export const Opponent_Score = {
+export const opponent_score_object = {
     "OppScore":
     {
         "Chance": 0,
@@ -16,12 +16,9 @@ export const Opponent_Score = {
         "TwoPair": 0,
         "Twos": 0,
         "Yatzy": 0,
-        "Total": 0,
-        "Sum" : 0,
-        "Bonous" : 0,
     },
 }
-export const MyEstimatedScore_and_Colors = {
+export const user_estimated_score_and_colors_object = {
     "MyScore":
         {
             "Chance": 0,
@@ -39,9 +36,6 @@ export const MyEstimatedScore_and_Colors = {
             "TwoPair": 0,
             "Twos": 0,
             "Yatzy": 0,
-            "Total": 0,
-            "Sum" : 0,
-            "Bonous" : 0,
         },
     "Colors" : {
         "Chance": 'yellow',
@@ -61,7 +55,7 @@ export const MyEstimatedScore_and_Colors = {
         "Yatzy":  "yellow"
     },
   }
-  export const Original_Score = {
+export const original_score_object = {
     "MyScore":
         {
             "Chance": 0,
@@ -85,7 +79,7 @@ export const MyEstimatedScore_and_Colors = {
         }
   }
 
-  export interface Score_Data {
+  export interface Score_Data_interface {
     Ones: Number;
     Twos: Number;
     Threes:Number;
@@ -105,7 +99,7 @@ export const MyEstimatedScore_and_Colors = {
     Yatzy :Number;
     Total : Number;
   }
-  export interface Colors{
+  export interface Colors_interface  {
     Ones: string;
     Twos: string;
     Threes: string;

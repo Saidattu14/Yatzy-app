@@ -68,7 +68,6 @@ const defaultstate = {
 */
 const CreateAccount = (props:any) => {
   const {navigation,route} = props;
-  console.log(props)
    // Stores the websocket data
   var socket : any;
    // Get the values in the Datalayer to do operations.

@@ -3,20 +3,20 @@ import {Image,SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,V
   DrawerLayoutAndroid,TextInput
 } from 'react-native';
 import styled from 'styled-components/native';
-import { Score_Data, Colors } from './interfaces_json';
+import { Score_Data_interface, Colors_interface } from './interfaces_json';
 
 /**
  This Function component handles the ScoreBoard infromatation of both the user and the opponent.
  Here User get th Estimated scores after the dice was rolled the user can select the respective score to
  update in the original score.
 */
-const Scoreboard :React.FC<{score: Score_Data,
-  originalscores : Score_Data;
-  colors: Colors;
+const Scoreboard :React.FC<{score: Score_Data_interface,
+  originalscores : Score_Data_interface;
+  colors: Colors_interface;
   websocket : WebSocket;
   Turn : string,
   Ok : boolean,
-  oppscore : Score_Data
+  oppscore : Score_Data_interface
 }>= ({score,originalscores,colors,websocket,Turn,Ok,oppscore}) => 
 {
   const [count,setCount] = useState(Ok);

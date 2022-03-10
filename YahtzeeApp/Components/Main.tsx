@@ -336,6 +336,7 @@ const GameBoard : React.FC<{websocket: any; MyTurn: string,OppTurn: string}> = (
   This Function recieves the messages from the server.
 */
 
+const recieve_messages_from_server = (websocket : any, drawer: any) => {
 
   try {
       websocket.onmessage = async(e:any) => {
@@ -369,16 +370,18 @@ const GameBoard : React.FC<{websocket: any; MyTurn: string,OppTurn: string}> = (
   } catch (error) {
     console.log(error)
   }
+}
    /**
     This is useEffect fuction calls the repective function for the first time when the screen loads.
   */
 
   useEffect(() => {
+    recieve_messages_from_server(websocket,drawer);
     // BackHandler.addEventListener("hardwareBackPress", backAction);
     // return () => {
     // BackHandler.removeEventListener("hardwareBackPress", backAction);
     //}
-  }, []);
+  }, [recieve_messages_from_server]);
 
 
     return (

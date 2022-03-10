@@ -230,7 +230,7 @@ useEffect(() => {
     return () => {
     BackHandler.removeEventListener("hardwareBackPress", backAction);
     }
-  }, []);
+  }, [recieve_messages_from_server]);
 
  /**
   Rendering the UI Elements Here.

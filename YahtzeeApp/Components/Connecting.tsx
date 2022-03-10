@@ -116,7 +116,7 @@ const recieve_messages_from_server = (socket : any) => {
   useEffect(() => {
     addwebsocket();
     recieve_messages_from_server(socket);
-  }, []);
+  }, [recieve_messages_from_server]);
 
 
   return (

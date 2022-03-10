@@ -73,9 +73,8 @@ export const original_score_object = {
             "TwoPair": 0,
             "Twos": 0,
             "Yatzy": 0,
-            "Total": 0,
-            "Sum" : 0,
-            "Bonous" : 0,
+           
+           
         }
   }
 
@@ -86,8 +85,6 @@ export const original_score_object = {
     Fours:Number;
     Fives:Number;
     Sixs:Number;
-    Sum : Number;
-    Bonous : Number,
     Pair:Number;
     TwoPair:Number;
     ThreeofKind:Number;
@@ -96,8 +93,7 @@ export const original_score_object = {
     SmallStraight:Number;
     LargeStraight:Number;
     Chance:Number;
-    Yatzy :Number;
-    Total : Number;
+   
   }
   export interface Colors_interface  {
     Ones: string;

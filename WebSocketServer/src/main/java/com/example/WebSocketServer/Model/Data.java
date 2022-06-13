@@ -1,6 +1,6 @@
-package com.example.WebSocketServer;
+package com.example.WebSocketServer.Model;
 
-import com.google.gson.JsonObject;
+import com.example.WebSocketServer.Services.Scoreboard;
 import org.json.JSONObject;
 
 import java.util.Hashtable;
@@ -11,7 +11,7 @@ public class Data {
     private JSONObject colors;
     private Scoreboard sc = new Scoreboard();
     private Hashtable<String,Integer> checking;
-    Data(JSONObject estimated_score, Hashtable<String, Integer> checking, JSONObject colors)
+    public Data(JSONObject estimated_score, Hashtable<String, Integer> checking, JSONObject colors)
     {
         this.estimated_score = estimated_score;
         this.colors = colors;

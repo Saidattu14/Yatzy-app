@@ -1,4 +1,4 @@
-package com.example.WebSocketServer;
+package com.example.WebSocketServer.Model;
 
 import org.springframework.web.socket.WebSocketSession;
 
@@ -8,7 +8,7 @@ public class Client {
     private String MyName;
     private Data myobj;
     private Data Oppobj;
-    Client(Data e)
+    public Client(Data e)
     {
      this.myobj = e;
     }

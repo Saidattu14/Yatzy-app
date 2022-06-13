@@ -1,12 +1,14 @@
-package com.example.WebSocketServer;
-import com.google.gson.JsonObject;
+package com.example.WebSocketServer.Services;
+
 import org.json.JSONObject;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.*;
+
+@Service
 public class Scoreboard {
-    private JSONObject js;
-    private List<Integer> list=new ArrayList<Integer>();
+
     public int Ones_Twos_Threes_Fours_Fives_Sixs(List<Integer> list,int value)
     {
 

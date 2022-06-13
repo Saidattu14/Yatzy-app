@@ -68,7 +68,7 @@ const Navigation_to_Request_Screen = (remoteMessage : FirebaseMessagingTypes.Rem
 */
 const getUserName = async() => {
     let name = await AsyncStorage.getItem("MyName")
-    
+    //await AsyncStorage.removeItem("MyName")
     if(name != null)
     {
       setisUserNamePresent(false);

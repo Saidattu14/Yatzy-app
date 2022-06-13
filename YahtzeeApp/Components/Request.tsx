@@ -13,6 +13,7 @@ const Request_page = (props:any) => {
     This function navigates the user to connect screen if the user accept the request.
   */
   const navigate = async() => {
+    console.log(Key.data)
     navigation.navigate('Connect',{
       OppName: Key.data.OpponentName,
       MyName : await AsyncStorage.getItem("MyName")

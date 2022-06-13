@@ -1,10 +1,14 @@
-package com.example.WebSocketServer;
+package com.example.WebSocketServer.Services;
 import com.google.firebase.messaging.*;
+import org.springframework.stereotype.Service;
 import java.util.concurrent.ExecutionException;
 
 
-public class FirebaseConfig {
-    void FirebaseSendMessage(String registrationToken, String from, String to) throws FirebaseMessagingException, ExecutionException, InterruptedException {
+
+@Service
+public class SendingNotificationService {
+
+    public void sendMessage(String registrationToken, String from, String to) throws ExecutionException, InterruptedException {
         Message message = Message.builder()
                 .setNotification(Notification.builder()
                         .setTitle("Game Play Request " +" From " + to)
@@ -29,4 +33,5 @@ public class FirebaseConfig {
         // Response is a message ID string.
         System.out.println("Successfully sent message: " + response);
     }
+
 }

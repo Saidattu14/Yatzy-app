@@ -533,6 +533,7 @@ const recieve_messages_from_server = (websocket : any, drawer: any) => {
 
 
 const Main = (props:any) => {
+  console.log("helllo")
   const {navigation,route} = props;
   const {MyTurn} = route.params;
   const {OppTurn} = route.params;

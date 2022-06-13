@@ -1,11 +1,11 @@
-package com.example.WebSocketServer;
+package com.example.WebSocketServer.Model;
 
 public class Users {
     private  String FCM;
     private String Name;
     private  String Status;
     private int Index;
-    Users(String Name, String FCM, String Status)
+    public Users(String Name, String FCM, String Status)
     {
      this.Name = Name;
      this.FCM = FCM;
